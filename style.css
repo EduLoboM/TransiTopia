@@ -497,13 +497,60 @@ body {
 /* --- Global Build Toolbar / Dock (SimCity Style) --- */
 .build-toolbar {
     display: flex;
-    gap: 12px;
-    padding: 10px 20px;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
     background: var(--bg-panel);
     border: var(--border-thick);
     border-radius: 9999px; /* Pill dock layout */
     box-shadow: var(--box-shadow-flat);
     pointer-events: auto;
+    max-width: 90vw;
+}
+
+/* Scrollable container for building items */
+.build-scroll-wrapper {
+    position: relative;
+    overflow: hidden;
+    max-width: 340px;
+    flex-shrink: 1;
+}
+
+.build-scroll-wrapper::before,
+.build-scroll-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    z-index: 2;
+    pointer-events: none;
+}
+.build-scroll-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg-panel), transparent);
+    border-radius: 9999px 0 0 9999px;
+}
+.build-scroll-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg-panel), transparent);
+    border-radius: 0 9999px 9999px 0;
+}
+
+.build-scroll-list {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 28px;
+    scrollbar-width: none; /* Firefox */
+}
+.build-scroll-list::-webkit-scrollbar { display: none; }
+
+.build-scroll-list .build-item {
+    scroll-snap-align: start;
+    flex-shrink: 0;
 }
 
 /* Toolbar Buttons */
