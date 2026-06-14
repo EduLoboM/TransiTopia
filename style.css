@@ -53,6 +53,25 @@ body {
     z-index: 1;
 }
 
+/* Tool-specific cursors for the canvas */
+#canvas-container.tool-road,
+#canvas-container.tool-sos,
+#canvas-container.tool-fauna {
+    cursor: crosshair;
+}
+
+#canvas-container.tool-demolish {
+    cursor: not-allowed;
+}
+
+#canvas-container.tool-select {
+    cursor: grab;
+}
+
+#canvas-container.tool-select:active {
+    cursor: grabbing;
+}
+
 /* --- HUD Overlay Layout & Wrappers --- */
 .hud-layer {
     position: absolute;
@@ -522,6 +541,28 @@ body {
     background-color: var(--color-pink);
     transform: translateY(2px);
     box-shadow: 0 1px 0 var(--outline-color);
+}
+
+/* Tool-specific active colors */
+#tool-select.active {
+    background-color: var(--color-blue);
+}
+
+#tool-road.active {
+    background-color: #94a3b8; /* Slate for road */
+    color: white;
+}
+
+#tool-sos.active {
+    background-color: var(--color-pink);
+}
+
+#tool-fauna.active {
+    background-color: var(--color-mint);
+}
+
+#tool-demolish.active {
+    background-color: var(--color-danger);
 }
 
 .tool-icon {
