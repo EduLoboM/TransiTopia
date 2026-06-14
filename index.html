@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transitopia - Conectando Estradas Reais a Cidades Virtuais</title>
+    <meta name="description" content="Transitopia é um simulador 3D gamificado onde os quilômetros rodados no mundo real são convertidos em recursos para gerenciar e expandir sua própria rodovia e manter cidadãos virtuais felizes.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 3D Canvas Container -->
+        <div id="canvas-container"></div>
+
+        <!-- Sleek & Cozy HUD Interface -->
+        <div class="hud-layer">
+            
+            <!-- Top Dashboard Container -->
+            <div class="hud-header-wrapper" id="header-wrapper">
+                <header class="hud-header glass-panel" id="hud-header">
+                    <div class="brand">
+                        <span class="logo-icon">🏗️</span>
+                        <div class="brand-text">
+                            <h1>TransiTopia</h1>
+                            <span class="tagline">Bienal ABCR 2026</span>
+                        </div>
+                    </div>
+
+                    <div class="stats-group">
+                        <!-- Happiness Indicator -->
+                        <div class="stat-card happiness" title="Felicidade Geral dos Cidadãos">
+                            <span class="stat-icon">🦊</span>
+                            <div class="stat-info">
+                                <span class="stat-label">Felicidade</span>
+                                <span class="stat-value" id="happiness-value">85%</span>
+                            </div>
+                            <div class="happiness-bar-container">
+                                <div class="happiness-bar" id="happiness-bar" style="width: 85%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Tokens -->
+                        <div class="stat-card tokens" title="Tokens de Concessão Acumulados">
+                            <span class="stat-icon">🪙</span>
+                            <div class="stat-info">
+                                <span class="stat-label">Tokens</span>
+                                <span class="stat-value" id="token-value">120</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <!-- Cozy bubble toggle button -->
+                <button class="panel-toggle-btn bubble-btn" id="header-toggle-btn" aria-label="Minimizar Painel Superior">
+                    <span class="toggle-arrow">▲</span>
+                </button>
+            </div>
+
+            <!-- Left Panel: Resources & GPS Simulation Wrapper -->
+            <div class="hud-left-wrapper" id="left-wrapper">
+                <section class="hud-panel left-panel glass-panel">
+                    <div class="panel-header">
+                        <h2>📋 Recursos</h2>
+                    </div>
+                    <div class="resources-grid">
+                        <div class="resource-item" id="resource-asphalt">
+                            <div class="res-icon">🛣️</div>
+                            <div class="res-data">
+                                <span class="res-name">Asfalto</span>
+                                <span class="res-value" id="asphalt-value">0.0 <small>t</small></span>
+                            </div>
+                        </div>
+                        <div class="resource-item" id="resource-steel">
+                            <div class="res-icon">⛓️</div>
+                            <div class="res-data">
+                                <span class="res-name">Aço</span>
+                                <span class="res-value" id="steel-value">0.0 <small>t</small></span>
+                            </div>
+                        </div>
+                        <div class="resource-item" id="resource-concrete">
+                            <div class="res-icon">🧱</div>
+                            <div class="res-data">
+                                <span class="res-name">Concreto</span>
+                                <span class="res-value" id="concrete-value">0.0 <small>t</small></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="gps-simulator-box">
+                        <h3>🚗 GPS Odômetro</h3>
+                        <div class="odometer-display">
+                            <span class="odo-label">Km Acumulados</span>
+                            <span class="odo-value" id="odometer-value">0.0 km</span>
+                        </div>
+                        <button class="btn btn-primary bubble-btn" id="simulate-gps-btn">
+                            <span class="btn-icon">⚡</span> Viajar (+5 km)
+                        </button>
+                    </div>
+                </section>
+                <!-- Cozy bubble toggle button -->
+                <button class="panel-toggle-btn bubble-btn" id="left-toggle-btn" aria-label="Minimizar Painel Lateral">
+                    <span class="toggle-arrow">◀</span>
+                </button>
+            </div>
+
+            <!-- Bottom Control Overlay: Selection info & Camera guides wrapper -->
+            <div class="hud-footer-wrapper" id="footer-wrapper">
+                <!-- Toggle button -->
+                <button class="panel-toggle-btn bubble-btn" id="footer-toggle-btn" aria-label="Minimizar Painel Inferior">
+                    <span class="toggle-arrow">▼</span>
+                </button>
+
+                <!-- Floating Selection Pill Detail (shows above toolbar when tile is selected) -->
+                <div class="floating-selection-card glass-panel hidden" id="selected-tile-info">
+                    <div class="card-icon" id="tile-info-icon">📍</div>
+                    <div class="card-text">
+                        <h4 id="tile-info-title">Nenhum lote selecionado</h4>
+                        <p id="tile-info-description">Clique no grid para inspecionar.</p>
+                    </div>
+                </div>
+
+                <footer class="hud-footer">
+                    <!-- Global Bottom Toolbar / Build Dock (SimCity Style) -->
+                    <div class="build-toolbar glass-panel" id="build-toolbar">
+                        <button class="tool-btn active bubble-btn" id="tool-select" data-tool="select" title="Inspecionar Terreno">
+                            <span class="tool-icon">🖐️</span> <span class="tool-label">Inspecionar</span>
+                        </button>
+                        <button class="tool-btn bubble-btn" id="tool-road" data-tool="road" title="Construir Rodovia (Custo: 2.0t Asfalto)">
+                            <span class="tool-icon">🛣️</span> <span class="tool-label">Rodovia</span>
+                        </button>
+                        <button class="tool-btn bubble-btn" id="tool-sos" data-tool="sos" title="Construir SOS Médico (Custo: 1.5t Concreto + 1.0t Aço)">
+                            <span class="tool-icon">🚑</span> <span class="tool-label">SOS</span>
+                        </button>
+                        <button class="tool-btn bubble-btn" id="tool-fauna" data-tool="fauna" title="Construir Ecoduto (Custo: 2.0t Concreto + 2.0t Aço)">
+                            <span class="tool-icon">🦊</span> <span class="tool-label">Fauna</span>
+                        </button>
+                        <button class="tool-btn bubble-btn" id="tool-demolish" data-tool="demolish" title="Demolir Construção">
+                            <span class="tool-icon">🧹</span> <span class="tool-label">Demolir</span>
+                        </button>
+                    </div>
+
+                    <div class="controls-guide glass-panel">
+                        <h3>🎮 Controles</h3>
+                        <div class="guides">
+                            <span><kbd>Botão Esquerdo</kbd> Girar</span>
+                            <span><kbd>Botão Direito / Shift</kbd> Mover</span>
+                            <span><kbd>Scroll</kbd> Zoom</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Cozy Notification toast container -->
+        <div id="toast-notification" class="toast hidden bubble-btn"></div>
+    </div>
+    <script type="module" src="/main.js"></script>
+</body>
+</html>
