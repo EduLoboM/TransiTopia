@@ -31,26 +31,10 @@
                     </div>
 
                     <div class="stats-group">
-                        <!-- Happiness Indicator -->
-                        <div class="stat-card happiness" title="Felicidade Geral dos Cidadãos">
-                            <span class="stat-icon">🦊</span>
-                            <div class="stat-info">
-                                <span class="stat-label">Felicidade</span>
-                                <span class="stat-value" id="happiness-value">85%</span>
-                            </div>
-                            <div class="happiness-bar-container">
-                                <div class="happiness-bar" id="happiness-bar" style="width: 85%;"></div>
-                            </div>
-                        </div>
-
-                        <!-- Tokens -->
-                        <div class="stat-card tokens" title="Tokens de Concessão Acumulados">
-                            <span class="stat-icon">🪙</span>
-                            <div class="stat-info">
-                                <span class="stat-label">Tokens</span>
-                                <span class="stat-value" id="token-value">120</span>
-                            </div>
-                        </div>
+                        <!-- Lojinha (Rewards Shop) Button -->
+                        <button class="btn-shop bubble-btn" id="open-shop-btn" title="Lojinha de Recompensas ABCR">
+                            <span>🎁</span> Lojinha
+                        </button>
                     </div>
                 </header>
                 <!-- Cozy bubble toggle button -->
@@ -66,11 +50,11 @@
                         <h2>📋 Recursos</h2>
                     </div>
                     <div class="resources-grid">
-                        <div class="resource-item" id="resource-asphalt">
-                            <div class="res-icon">🛣️</div>
+                        <div class="resource-item" id="resource-minerals">
+                            <div class="res-icon">💎</div>
                             <div class="res-data">
-                                <span class="res-name">Asfalto</span>
-                                <span class="res-value" id="asphalt-value">0.0 <small>t</small></span>
+                                <span class="res-name">Minerais</span>
+                                <span class="res-value" id="minerals-value">0.0 <small>t</small></span>
                             </div>
                         </div>
                         <div class="resource-item" id="resource-steel">
@@ -80,11 +64,32 @@
                                 <span class="res-value" id="steel-value">0.0 <small>t</small></span>
                             </div>
                         </div>
-                        <div class="resource-item" id="resource-concrete">
-                            <div class="res-icon">🧱</div>
+                        <div class="resource-item" id="resource-energy">
+                            <div class="res-icon">⚡</div>
                             <div class="res-data">
-                                <span class="res-name">Concreto</span>
-                                <span class="res-value" id="concrete-value">0.0 <small>t</small></span>
+                                <span class="res-name">Energia</span>
+                                <span class="res-value" id="energy-value">0.0 <small>MW</small></span>
+                            </div>
+                        </div>
+                        <div class="resource-item" id="resource-water">
+                            <div class="res-icon">💧</div>
+                            <div class="res-data">
+                                <span class="res-name">Água</span>
+                                <span class="res-value" id="water-value">0.0 <small>m³</small></span>
+                            </div>
+                        </div>
+                        <div class="resource-item" id="resource-tokens">
+                            <div class="res-icon">🪙</div>
+                            <div class="res-data">
+                                <span class="res-name">Tokens</span>
+                                <span class="res-value" id="tokens-resource-value">120</span>
+                            </div>
+                        </div>
+                        <div class="resource-item" id="resource-happiness">
+                            <div class="res-icon">🦊</div>
+                            <div class="res-data">
+                                <span class="res-name">Felicidade</span>
+                                <span class="res-value" id="happiness-resource-value">85%</span>
                             </div>
                         </div>
                     </div>
@@ -102,7 +107,7 @@
                 </section>
                 <!-- Cozy bubble toggle button -->
                 <button class="panel-toggle-btn bubble-btn" id="left-toggle-btn" aria-label="Minimizar Painel Lateral">
-                    <span class="toggle-arrow">◀</span>
+                    <span class="toggle-arrow">▲</span>
                 </button>
             </div>
 
@@ -110,7 +115,7 @@
             <div class="hud-footer-wrapper" id="footer-wrapper">
                 <!-- Toggle button -->
                 <button class="panel-toggle-btn bubble-btn" id="footer-toggle-btn" aria-label="Minimizar Painel Inferior">
-                    <span class="toggle-arrow">▼</span>
+                    <span class="toggle-arrow">▲</span>
                 </button>
 
                 <!-- Floating Selection Pill Detail (shows above toolbar when tile is selected) -->
@@ -128,31 +133,34 @@
                         <button class="tool-btn active bubble-btn" id="tool-select" data-tool="select" title="Inspecionar Terreno">
                             <span class="tool-icon">🖐️</span> <span class="tool-label">Inspecionar</span>
                         </button>
-                        <button class="tool-btn bubble-btn" id="tool-road" data-tool="road" title="Construir Rodovia (Custo: 2.0t Asfalto)">
+                        <button class="tool-btn bubble-btn" id="tool-road" data-tool="road" title="Construir Rodovia (Custo: 2.0t Minerais)">
                             <span class="tool-icon">🛣️</span> <span class="tool-label">Rodovia</span>
                         </button>
                         <div class="build-scroll-wrapper">
                             <div class="build-scroll-list" id="build-scroll-list">
-                                <button class="tool-btn bubble-btn build-item" id="tool-hospital" data-tool="hospital" title="Hospital (2.0t Aço + 3.0t Concreto)">
+                                <button class="tool-btn bubble-btn build-item" id="tool-hospital" data-tool="hospital" title="Hospital (1.0t Minerais + 3.0t Aço + 1.0t Energia + 1.0t Água)">
                                     <span class="tool-icon">🏥</span> <span class="tool-label">Hospital</span>
                                 </button>
-                                <button class="tool-btn bubble-btn build-item" id="tool-floresta" data-tool="floresta" title="Floresta (1.0t Concreto)">
+                                <button class="tool-btn bubble-btn build-item" id="tool-floresta" data-tool="floresta" title="Floresta (1.0t Minerais + 2.0t Água)">
                                     <span class="tool-icon">🌳</span> <span class="tool-label">Floresta</span>
                                 </button>
-                                <button class="tool-btn bubble-btn build-item" id="tool-usina" data-tool="usina" title="Usina Eólica+Solar (3.0t Aço + 2.0t Concreto)">
+                                <button class="tool-btn bubble-btn build-item" id="tool-usina" data-tool="usina" title="Usina de Energia (3.0t Minerais + 2.0t Aço)">
                                     <span class="tool-icon">⚡</span> <span class="tool-label">Usina</span>
                                 </button>
-                                <button class="tool-btn bubble-btn build-item" id="tool-fabrica" data-tool="fabrica" title="Fábrica (1.0t Asfalto + 3.0t Aço + 2.0t Concreto)">
+                                <button class="tool-btn bubble-btn build-item" id="tool-fabrica" data-tool="fabrica" title="Fábrica de Asfalto (2.0t Minerais + 4.0t Aço + 1.0t Energia)">
                                     <span class="tool-icon">🏭</span> <span class="tool-label">Fábrica</span>
                                 </button>
-                                <button class="tool-btn bubble-btn build-item" id="tool-mina" data-tool="mina" title="Mina (1.0t Asfalto + 2.0t Aço + 1.0t Concreto)">
+                                <button class="tool-btn bubble-btn build-item" id="tool-mina" data-tool="mina" title="Mina de Minerais (3.0t Aço + 1.0t Energia)">
                                     <span class="tool-icon">⛏️</span> <span class="tool-label">Mina</span>
                                 </button>
-                                <button class="tool-btn bubble-btn build-item" id="tool-agua" data-tool="agua" title="Estação de Água (1.5t Aço + 2.5t Concreto)">
+                                <button class="tool-btn bubble-btn build-item" id="tool-agua" data-tool="agua" title="Poço de Água (2.0t Minerais + 2.0t Aço + 1.0t Energia)">
                                     <span class="tool-icon">💧</span> <span class="tool-label">Água</span>
                                 </button>
-                                <button class="tool-btn bubble-btn build-item" id="tool-predio" data-tool="predio" title="Prédio (2.0t Aço + 2.0t Concreto)">
+                                <button class="tool-btn bubble-btn build-item" id="tool-predio" data-tool="predio" title="Prédio (2.0t Minerais + 2.0t Aço + 1.0t Energia + 1.0t Água)">
                                     <span class="tool-icon">🏢</span> <span class="tool-label">Prédio</span>
+                                </button>
+                                <button class="tool-btn bubble-btn build-item" id="tool-cinema" data-tool="cinema" title="Cinema Cozy (3.0t Minerais + 3.0t Aço + 2.0t Energia)">
+                                    <span class="tool-icon">🎬</span> <span class="tool-label">Cinema</span>
                                 </button>
                             </div>
                         </div>
@@ -170,6 +178,71 @@
                         </div>
                     </div>
                 </footer>
+            </div>
+        </div>
+
+        <!-- Lojinha (Rewards Shop) Modal -->
+        <div id="shop-modal" class="modal-overlay hidden">
+            <div class="modal-card glass-panel">
+                <button class="modal-close-btn bubble-btn" id="close-shop-btn" aria-label="Fechar Lojinha">✖</button>
+                <div class="modal-header">
+                    <h2>🎁 Lojinha de Recompensas ABCR</h2>
+                    <p class="modal-subtitle">Troque seus Tokens de Concessão por benefícios reais na estrada!</p>
+                </div>
+                
+                <div class="shop-status-bar" id="shop-status-bar">
+                    <!-- Dynamic verification status populated by JS -->
+                </div>
+
+                <div class="shop-grid">
+                    <!-- Sem Parar -->
+                    <div class="shop-card">
+                        <div class="shop-card-icon">🛣️</div>
+                        <div class="shop-card-info">
+                            <h3>Tag Sem Parar (R$ 10)</h3>
+                            <p>R$ 10,00 de crédito direto para usar no pedágio automático.</p>
+                        </div>
+                        <button class="btn shop-redeem-btn bubble-btn" data-reward="semparar" data-cost="500">
+                            🪙 500 Tokens
+                        </button>
+                    </div>
+
+                    <!-- ConectCar -->
+                    <div class="shop-card">
+                        <div class="shop-card-icon">🚗</div>
+                        <div class="shop-card-info">
+                            <h3>Tag ConectCar (R$ 10)</h3>
+                            <p>R$ 10,00 de crédito direto para usar na tag ConectCar.</p>
+                        </div>
+                        <button class="btn shop-redeem-btn bubble-btn" data-reward="conectcar" data-cost="500">
+                            🪙 500 Tokens
+                        </button>
+                    </div>
+
+                    <!-- Combustível Posto Parceiro -->
+                    <div class="shop-card">
+                        <div class="shop-card-icon">⛽</div>
+                        <div class="shop-card-info">
+                            <h3>Desconto Combustível (R$ 15)</h3>
+                            <p>Desconto de R$ 15,00 em postos de combustível credenciados na rodovia.</p>
+                        </div>
+                        <button class="btn shop-redeem-btn bubble-btn" data-reward="combustivel" data-cost="800">
+                            🪙 800 Tokens
+                        </button>
+                    </div>
+
+                    <!-- Voucher de Conveniência -->
+                    <div class="shop-card">
+                        <div class="shop-card-icon">☕</div>
+                        <div class="shop-card-info">
+                            <h3>Café & Pão de Queijo</h3>
+                            <p>Voucher de combo lanche cortesia nas paradas e conveniências parceiras.</p>
+                        </div>
+                        <button class="btn shop-redeem-btn bubble-btn" data-reward="cafe" data-cost="400">
+                            🪙 400 Tokens
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 

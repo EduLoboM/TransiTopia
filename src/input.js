@@ -15,7 +15,7 @@ let lastPaintedTile = null; // Local reference to track building drag sequences
 
 // All tools that place structures on a tile (road is paint-drag, rest are click)
 const PAINT_TOOLS = new Set(['road', 'demolish']);
-const BUILD_TOOLS = new Set(['road', 'hospital', 'floresta', 'usina', 'fabrica', 'mina', 'agua', 'predio', 'demolish']);
+const BUILD_TOOLS = new Set(['road', 'hospital', 'floresta', 'usina', 'fabrica', 'mina', 'agua', 'predio', 'cinema', 'demolish']);
 
 // --- Bresenham's Line Algorithm for Grid Interpolation ---
 export function getGridLine(x1, z1, x2, z2) {
