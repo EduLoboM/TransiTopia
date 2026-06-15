@@ -7,17 +7,17 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 let isDragging = false;
-let dragMode = null; // 'rotate' or 'pan'
+let dragMode = null; 
 let previousMousePosition = { x: 0, y: 0 };
 let initialTouchDistance = 0;
 let isTwoFingerTouch = false;
-let lastPaintedTile = null; // Local reference to track building drag sequences
+let lastPaintedTile = null; 
 
-// All tools that place structures on a tile (road is paint-drag, rest are click)
+
 const PAINT_TOOLS = new Set(['road', 'demolish']);
 const BUILD_TOOLS = new Set(['road', 'hospital', 'floresta', 'usina', 'fabrica', 'mina', 'agua', 'predio', 'cinema', 'demolish']);
 
-// --- Bresenham's Line Algorithm for Grid Interpolation ---
+
 export function getGridLine(x1, z1, x2, z2) {
     const points = [];
     const dx = Math.abs(x2 - x1);
@@ -45,7 +45,7 @@ export function getGridLine(x1, z1, x2, z2) {
     return points;
 }
 
-// --- Hybrid Raycast Handler ---
+
 export function raycastTile(clientX, clientY) {
     const rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
@@ -53,7 +53,7 @@ export function raycastTile(clientX, clientY) {
 
     raycaster.setFromCamera(mouse, camera);
 
-    // 1. SELECT MODE: Try recursive mesh raycasting first
+    
     if (state.currentTool === 'select') {
         const intersects = raycaster.intersectObjects(scene.children, true);
         for (const intersect of intersects) {
@@ -68,7 +68,7 @@ export function raycastTile(clientX, clientY) {
         }
     }
 
-    // 2. CONSTRUCTION/PAINT MODES & SELECT FALLBACK: Raycast against mathematical plane y = 0
+    
     const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0.0);
     const targetVector = new THREE.Vector3();
     if (raycaster.ray.intersectPlane(plane, targetVector)) {
@@ -83,7 +83,7 @@ export function raycastTile(clientX, clientY) {
     return null;
 }
 
-// --- Input Handling Initialization ---
+
 export function initInput(container) {
     container.addEventListener('mousedown', onMouseDown);
     container.addEventListener('mousemove', onMouseMove);
@@ -92,22 +92,22 @@ export function initInput(container) {
     container.addEventListener('contextmenu', e => e.preventDefault());
 }
 
-// --- Mouse Events ---
+
 function onMouseDown(event) {
     isDragging = true;
     previousMousePosition = { x: event.clientX, y: event.clientY };
 
-    // Explicitly raycast on click
+    
     const tile = raycastTile(event.clientX, event.clientY);
     setHoveredTile(tile);
 
-    // If we're in a painting tool mode (road, demolish), start painting instead of rotating
+    
     if (event.button === 0 && !event.shiftKey && PAINT_TOOLS.has(state.currentTool)) {
         state.isPainting = true;
         state.paintedThisDrag = new Set();
-        dragMode = null; // Don't rotate camera while painting
+        dragMode = null; 
         
-        // Immediately paint the tile under cursor
+        
         if (tile) {
             const key = `${tile.x},${tile.z}`;
             state.paintedThisDrag.add(key);
@@ -127,11 +127,11 @@ function onMouseDown(event) {
 }
 
 function onMouseMove(event) {
-    // Update hovered tile via raycast
+    
     const tile = raycastTile(event.clientX, event.clientY);
     setHoveredTile(tile);
 
-    // Drag-to-paint logic
+    
     if (state.isPainting && tile) {
         if (lastPaintedTile) {
             const line = getGridLine(lastPaintedTile.x, lastPaintedTile.z, tile.x, tile.z);
@@ -162,7 +162,7 @@ function onMouseMove(event) {
         return;
     }
 
-    // Camera navigation
+    
     if (!isDragging) return;
 
     const deltaX = event.clientX - previousMousePosition.x;
@@ -348,7 +348,7 @@ function onTouchEnd(event) {
     isTwoFingerTouch = false;
 }
 
-// --- Grid Click Handler ---
+
 function handleGridClick() {
     if (!hoveredTile) {
         state.selectedTile = null;

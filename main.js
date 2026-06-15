@@ -29,6 +29,12 @@ function saveGameToServer() {
         tiles: tilesData
     };
 
+    try {
+        localStorage.setItem('transitopia_state', JSON.stringify(payload));
+    } catch (e) {
+        console.error("Erro ao salvar progresso localmente:", e);
+    }
+
     fetch('/api/save', {
         method: 'POST',
         headers: {
@@ -39,53 +45,79 @@ function saveGameToServer() {
     .catch(err => console.error("Erro ao salvar progresso no servidor:", err));
 }
 
+function applyLoadedState(s) {
+    if (!s) return;
+    state.odometer = s.odometer;
+    state.resources = s.resources;
+    state.tokens = s.tokens;
+    state.happiness = s.happiness;
+    state.happinessTrend = s.happinessTrend;
+
+    if (s.tiles) {
+        for (let x = 0; x < s.tiles.length; x++) {
+            for (let z = 0; z < s.tiles[x].length; z++) {
+                const loadedTile = s.tiles[x][z];
+                const localTile = tiles[x]?.[z];
+                if (localTile) {
+                    if (localTile.builtStructure) {
+                        localTile.mesh.remove(localTile.builtStructure);
+                        localTile.builtStructure = null;
+                    }
+                    localTile.type = loadedTile.type;
+                    localTile.originalType = loadedTile.originalType;
+
+                    if (['road', 'hospital', 'floresta', 'usina', 'fabrica', 'mina', 'agua', 'predio', 'cinema', 'mountain'].includes(localTile.type)) {
+                        buildStructureMesh(localTile, localTile.type);
+                    }
+                }
+            }
+        }
+        
+        for (let x = 0; x < tiles.length; x++) {
+            for (let z = 0; z < tiles[x].length; z++) {
+                if (tiles[x][z].type === 'road') {
+                    buildStructureMesh(tiles[x][z], 'road');
+                }
+            }
+        }
+    }
+
+    updateHUD();
+}
+
 function loadGameFromServer() {
     fetch('/api/load')
     .then(res => res.json())
     .then(data => {
         if (data.state) {
-            const s = data.state;
-            state.odometer = s.odometer;
-            state.resources = s.resources;
-            state.tokens = s.tokens;
-            state.happiness = s.happiness;
-            state.happinessTrend = s.happinessTrend;
-
-            if (s.tiles) {
-                for (let x = 0; x < s.tiles.length; x++) {
-                    for (let z = 0; z < s.tiles[x].length; z++) {
-                        const loadedTile = s.tiles[x][z];
-                        const localTile = tiles[x]?.[z];
-                        if (localTile) {
-                            if (localTile.builtStructure) {
-                                localTile.mesh.remove(localTile.builtStructure);
-                                localTile.builtStructure = null;
-                            }
-                            localTile.type = loadedTile.type;
-                            localTile.originalType = loadedTile.originalType;
-
-                            if (['road', 'hospital', 'floresta', 'usina', 'fabrica', 'mina', 'agua', 'predio', 'cinema', 'mountain'].includes(localTile.type)) {
-                                buildStructureMesh(localTile, localTile.type);
-                            }
-                        }
-                    }
-                }
-                
-                // Rebuild roads to ensure connections are rendered correctly
-                for (let x = 0; x < tiles.length; x++) {
-                    for (let z = 0; z < tiles[x].length; z++) {
-                        if (tiles[x][z].type === 'road') {
-                            buildStructureMesh(tiles[x][z], 'road');
-                        }
-                    }
+            applyLoadedState(data.state);
+            showToast("Progresso carregado do servidor!", "success");
+        } else {
+            const localData = localStorage.getItem('transitopia_state');
+            if (localData) {
+                try {
+                    const localState = JSON.parse(localData);
+                    applyLoadedState(localState);
+                    showToast("Progresso carregado localmente!", "success");
+                } catch (e) {
+                    console.error("Erro ao analisar localStorage:", e);
                 }
             }
-
-            updateHUD();
-            showToast("Progresso carregado do servidor!", "success");
         }
     })
-    .catch(err => console.error("Erro ao carregar progresso do servidor:", err));
+    .catch(err => {
+        console.error("Erro ao carregar progresso do servidor:", err);
+        const localData = localStorage.getItem('transitopia_state');
+        if (localData) {
+            try {
+                const localState = JSON.parse(localData);
+                applyLoadedState(localState);
+                showToast("Progresso carregado localmente (Offline)!", "success");
+            } catch (e) {
+                console.error("Erro ao analisar localStorage:", e);
+            }
+        }
+    });
 }
 
 window.saveGameToServer = saveGameToServer;
@@ -93,26 +125,26 @@ window.saveGameToServer = saveGameToServer;
 function init() {
     const mainContainer = document.getElementById('canvas-container');
     
-    // Initialize Three.js scene and pass tiles reference to animate loop
+    
     initScene(mainContainer, tiles);
 
-    // Create Grid and populate tiles
+    
     createGrid();
 
-    // Load progress from server
+    
     loadGameFromServer();
 
-    // Initialize inputs (mouse, wheels, touches)
+    
     initInput(mainContainer);
     initTouch(mainContainer);
 
-    // GPS simulator button
+    
     document.getElementById('simulate-gps-btn').addEventListener('click', () => {
         simulateGPSTravel();
         saveGameToServer();
     });
 
-    // Rewards Shop Modal Logic
+    
     const shopModal = document.getElementById('shop-modal');
     const openShopBtn = document.getElementById('open-shop-btn');
     const closeShopBtn = document.getElementById('close-shop-btn');
@@ -188,7 +220,7 @@ function init() {
         });
     });
 
-    // Collapsible Panels Event Handlers
+    
     document.getElementById('header-toggle-btn').addEventListener('click', () => {
         document.getElementById('header-wrapper').classList.toggle('collapsed');
     });
@@ -199,7 +231,7 @@ function init() {
         document.getElementById('footer-wrapper').classList.toggle('collapsed');
     });
 
-    // Build Toolbar buttons interaction
+    
     const toolButtons = document.querySelectorAll('.tool-btn');
     toolButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -207,12 +239,12 @@ function init() {
             btn.classList.add('active');
             state.currentTool = btn.dataset.tool;
             
-            // Update canvas cursor class
+            
             const canvas = document.getElementById('canvas-container');
             canvas.className = '';
             canvas.classList.add(`tool-${state.currentTool}`);
             
-            // If tool is not select, clear active selections
+            
             if (state.currentTool !== 'select') {
                 state.selectedTile = null;
                 updateTileSelectionInfo(null);
@@ -220,11 +252,11 @@ function init() {
         });
     });
 
-    // Initial DOM Update
+    
     updateHUD();
 
     let ticks = 0;
-    // Passive resource generation & dynamic happiness tick
+    
     setInterval(() => {
         ticks++;
         let produced = false;
@@ -235,7 +267,7 @@ function init() {
         let waterCount = 0;
         let tokensCount = 0;
         
-        // 1. Resource & Token Passive Generation
+        
         for (let x = 0; x < tiles.length; x++) {
             for (let z = 0; z < tiles[x].length; z++) {
                 const tile = tiles[x][z];
@@ -264,14 +296,14 @@ function init() {
             }
         }
 
-        // Store current rates in state
+        
         state.rates.minerals = mineralsCount * 0.2;
         state.rates.steel = steelCount * 0.2;
         state.rates.energy = energyCount * 0.2;
         state.rates.water = waterCount * 0.2;
         state.rates.tokens = tokensCount * 1.0;
 
-        // 2. Dynamic Happiness System
+        
         const predios = [];
         const amenities = [];
         
@@ -294,9 +326,9 @@ function init() {
 
         if (predios.length > 0) {
             predios.forEach(p => {
-                let hDelta = -0.05; // Base decay per second
+                let hDelta = -0.05; 
 
-                // Overcrowding from other predios within radius 6
+                
                 predios.forEach(other => {
                     if (other.x === p.x && other.z === p.z) return;
                     const d = Math.sqrt((p.x - other.x) ** 2 + (p.z - other.z) ** 2);
@@ -331,7 +363,7 @@ function init() {
             state.rates.happiness = 0.0;
         }
 
-        // Always update HUD to display current values and trend rate
+        
         updateHUD();
         
         if (state.selectedTile) {
@@ -343,14 +375,14 @@ function init() {
             updateShopStatus();
         }
 
-        // Auto-save progress every 10 seconds
+        
         if (ticks % 10 === 0) {
             saveGameToServer();
         }
 
-        // Spawn cars if road-connected structures exist
+        
         updateCarSpawning();
-        // Spawn furry citizens on sidewalks
+        
         updateFurrySpawning();
     }, 1000);
 }

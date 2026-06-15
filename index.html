@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transitopia - Conectando Estradas Reais a Cidades Virtuais</title>
     <meta name="description" content="Transitopia é um simulador 3D gamificado onde os quilômetros rodados no mundo real são convertidos em recursos para gerenciar e expandir sua própria rodovia e manter cidadãos virtuais felizes.">
-    <!-- Google Fonts -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,13 +13,13 @@
 </head>
 <body>
     <div id="app">
-        <!-- 3D Canvas Container -->
+        
         <div id="canvas-container"></div>
 
-        <!-- Sleek & Cozy HUD Interface -->
+        
         <div class="hud-layer">
             
-            <!-- Top Dashboard Container -->
+            
             <div class="hud-header-wrapper" id="header-wrapper">
                 <header class="hud-header glass-panel" id="hud-header">
                     <div class="brand">
@@ -31,19 +31,19 @@
                     </div>
 
                     <div class="stats-group">
-                        <!-- Lojinha (Rewards Shop) Button -->
+                        
                         <button class="btn-shop bubble-btn" id="open-shop-btn" title="Lojinha de Recompensas ABCR">
                             <span>🎁</span> Lojinha
                         </button>
                     </div>
                 </header>
-                <!-- Cozy bubble toggle button -->
+                
                 <button class="panel-toggle-btn bubble-btn" id="header-toggle-btn" aria-label="Minimizar Painel Superior">
                     <span class="toggle-arrow">▲</span>
                 </button>
             </div>
 
-            <!-- Left Panel: Resources & GPS Simulation Wrapper -->
+            
             <div class="hud-left-wrapper" id="left-wrapper">
                 <section class="hud-panel left-panel glass-panel">
                     <div class="panel-header">
@@ -105,20 +105,20 @@
                         </button>
                     </div>
                 </section>
-                <!-- Cozy bubble toggle button -->
+                
                 <button class="panel-toggle-btn bubble-btn" id="left-toggle-btn" aria-label="Minimizar Painel Lateral">
                     <span class="toggle-arrow">▲</span>
                 </button>
             </div>
 
-            <!-- Bottom Control Overlay: Selection info & Camera guides wrapper -->
+            
             <div class="hud-footer-wrapper" id="footer-wrapper">
-                <!-- Toggle button -->
+                
                 <button class="panel-toggle-btn bubble-btn" id="footer-toggle-btn" aria-label="Minimizar Painel Inferior">
                     <span class="toggle-arrow">▲</span>
                 </button>
 
-                <!-- Floating Selection Pill Detail (shows above toolbar when tile is selected) -->
+                
                 <div class="floating-selection-card glass-panel hidden" id="selected-tile-info">
                     <div class="card-icon" id="tile-info-icon">📍</div>
                     <div class="card-text">
@@ -128,7 +128,7 @@
                 </div>
 
                 <footer class="hud-footer">
-                    <!-- Global Bottom Toolbar / Build Dock (SimCity Style) -->
+                    
                     <div class="build-toolbar glass-panel" id="build-toolbar">
                         <button class="tool-btn active bubble-btn" id="tool-select" data-tool="select" title="Inspecionar Terreno">
                             <span class="tool-icon">🖐️</span> <span class="tool-label">Inspecionar</span>
@@ -181,7 +181,7 @@
             </div>
         </div>
 
-        <!-- Lojinha (Rewards Shop) Modal -->
+        
         <div id="shop-modal" class="modal-overlay hidden">
             <div class="modal-card glass-panel">
                 <button class="modal-close-btn bubble-btn" id="close-shop-btn" aria-label="Fechar Lojinha">✖</button>
@@ -191,11 +191,11 @@
                 </div>
                 
                 <div class="shop-status-bar" id="shop-status-bar">
-                    <!-- Dynamic verification status populated by JS -->
+                    
                 </div>
 
                 <div class="shop-grid">
-                    <!-- Sem Parar -->
+                    
                     <div class="shop-card">
                         <div class="shop-card-icon">🛣️</div>
                         <div class="shop-card-info">
@@ -207,7 +207,7 @@
                         </button>
                     </div>
 
-                    <!-- ConectCar -->
+                    
                     <div class="shop-card">
                         <div class="shop-card-icon">🚗</div>
                         <div class="shop-card-info">
@@ -219,7 +219,7 @@
                         </button>
                     </div>
 
-                    <!-- Combustível Posto Parceiro -->
+                    
                     <div class="shop-card">
                         <div class="shop-card-icon">⛽</div>
                         <div class="shop-card-info">
@@ -231,7 +231,7 @@
                         </button>
                     </div>
 
-                    <!-- Voucher de Conveniência -->
+                    
                     <div class="shop-card">
                         <div class="shop-card-icon">☕</div>
                         <div class="shop-card-info">
@@ -246,7 +246,7 @@
             </div>
         </div>
 
-        <!-- Cozy Notification toast container -->
+        
         <div id="toast-notification" class="toast hidden bubble-btn"></div>
     </div>
     <script type="module" src="/main.js"></script>

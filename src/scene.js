@@ -16,17 +16,17 @@ export const cameraState = {
     phiTarget: Math.PI / 3,
 };
 
-let activeTiles = []; // Reference to the active tiles array to avoid circular dependency
+let activeTiles = []; 
 
 export function initScene(container, tilesReference) {
     activeTiles = tilesReference;
 
-    // Scene setup - Brightsky Light Mode
+    
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xdbeafe); // Soft sky blue
+    scene.background = new THREE.Color(0xdbeafe); 
     scene.fog = new THREE.FogExp2(0xdbeafe, 0.012);
 
-    // Renderer setup
+    
     renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -34,7 +34,7 @@ export function initScene(container, tilesReference) {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
-    // Camera setup
+    
     camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     updateCameraPosition(true);
 
@@ -86,7 +86,7 @@ export function updateCameraPosition(immediate = false) {
     camera.lookAt(target);
 }
 
-// Global variable for hovering (updated by input module)
+
 export let hoveredTile = null;
 export function setHoveredTile(tile) {
     hoveredTile = tile;
@@ -95,7 +95,7 @@ export function setHoveredTile(tile) {
 function animate() {
     requestAnimationFrame(animate);
 
-    // 1. Smoothly interpolate camera state (damping)
+    
     cameraState.theta += (cameraState.thetaTarget - cameraState.theta) * 0.12;
     cameraState.phi += (cameraState.phiTarget - cameraState.phi) * 0.12;
     cameraState.distance += (cameraState.distanceTarget - cameraState.distance) * 0.12;
@@ -103,39 +103,39 @@ function animate() {
 
     updateCameraPosition();
 
-    // 2. Smoothly animate tiles (hover lift, color transitions, and sub-animations)
+    
     for (let x = 0; x < GRID_SIZE; x++) {
         if (!activeTiles[x]) continue;
         for (let z = 0; z < GRID_SIZE; z++) {
             const tile = activeTiles[x][z];
             if (!tile) continue;
             
-            // Calculate base level height
+            
             let baseHeight = -0.1;
             if (tile.type === 'water') baseHeight = -0.25;
             else if (tile.type === 'sand') baseHeight = -0.18;
             else if (tile.type === 'mountain') baseHeight = -0.1;
 
-            // Hover logic
+            
             if (hoveredTile && hoveredTile.x === x && hoveredTile.z === z) {
                 if (state.selectedTile && state.selectedTile.x === x && state.selectedTile.z === z) {
                     tile.targetY = baseHeight + 0.3;
-                    tile.targetColor.setHex(0xffaec1); // Selected color (Cotton-Candy Pink)
+                    tile.targetColor.setHex(0xffaec1); 
                 } else {
                     tile.targetY = baseHeight + 0.2;
-                    // Show tool-specific preview colors dynamically
+                    
                     const buildable = tile.type === 'grass' || tile.type === 'sand';
                     if (buildable && BUILD_CONFIGS[state.currentTool]) {
                         tile.targetColor.setHex(BUILD_CONFIGS[state.currentTool].color);
                     } else if (state.currentTool === 'demolish' && !['grass', 'sand', 'water', 'mountain'].includes(tile.type)) {
-                        tile.targetColor.setHex(0xff9e9e); // Red demolish preview
+                        tile.targetColor.setHex(0xff9e9e); 
                     } else {
-                        tile.targetColor.setHex(0x93c5fd); // Default hover (Sky Blue)
+                        tile.targetColor.setHex(0x93c5fd); 
                     }
                 }
             } else if (state.selectedTile && state.selectedTile.x === x && state.selectedTile.z === z) {
                 tile.targetY = baseHeight + 0.3;
-                tile.targetColor.setHex(0xffaec1); // Selected color (Cotton-Candy Pink)
+                tile.targetColor.setHex(0xffaec1); 
             } else {
                 tile.targetY = baseHeight;
                 if (['grass', 'water', 'sand', 'mountain'].includes(tile.type)) {
@@ -145,37 +145,37 @@ function animate() {
                 }
             }
 
-            // Lerp physical height
+            
             tile.mesh.position.y += (tile.targetY - tile.mesh.position.y) * 0.18;
             
-            // Lerp color
+            
             tile.material.color.lerp(tile.targetColor, 0.18);
 
-            // Sub-animations (like wind turbine rotation)
+            
             if (tile.builtStructure && tile.type === 'usina') {
                 const blades = tile.builtStructure.getObjectByName("usina_blades");
                 if (blades) {
-                    blades.rotation.z += 0.05; // Spin wind turbine blades
+                    blades.rotation.z += 0.05; 
                 }
             }
         }
     }
 
-    // Animate swimming fish in water tiles
+    
     if (window.swimmingFish && window.swimmingFish.length > 0) {
         window.swimmingFish.forEach(fish => {
             fish.angle += fish.speed;
             
-            // Calculate circular movement path
+            
             fish.group.position.x = Math.cos(fish.angle) * fish.radius;
             fish.group.position.z = Math.sin(fish.angle) * fish.radius;
             
-            // Set tangent heading angle
+            
             const dx = -Math.sin(fish.angle) * fish.speed;
             const dz = Math.cos(fish.angle) * fish.speed;
             fish.group.rotation.y = Math.atan2(dx, dz);
             
-            // Wiggle the tail fin
+            
             fish.finAngle += 0.25;
             const fin = fish.group.children[1];
             if (fin) {
@@ -184,12 +184,12 @@ function animate() {
         });
     }
 
-    // Animate active cars on road paths
+    
     if (window.activeCars && window.activeCars.length > 0) {
         for (let i = window.activeCars.length - 1; i >= 0; i--) {
             const car = window.activeCars[i];
             
-            // Safety check for valid car structure
+            
             if (!car || !car.path || !car.mesh || !car.originalPath) {
                 if (car && car.mesh) scene.remove(car.mesh);
                 window.activeCars.splice(i, 1);
@@ -197,10 +197,10 @@ function animate() {
             }
             
             try {
-                // If car reached end of path
+                
                 if (car.currentIndex >= car.path.length - 1) {
                     scene.remove(car.mesh);
-                    // Clean up geometries and materials
+                    
                     car.mesh.traverse(child => {
                         if (child.isMesh) {
                             if (child.geometry) child.geometry.dispose();
@@ -228,7 +228,7 @@ function animate() {
                 
                 const dist = p1.distanceTo(p2);
                 
-                // Advance progress relative to distance to maintain constant visual speed
+                
                 car.progress += car.speed / Math.max(0.01, dist);
                 
                 // Interpolate position using the current segment, clamping to 1.0
@@ -419,11 +419,11 @@ function animate() {
                 const currentY = furry.mesh.position.y;
                 const newY = currentY + (targetY - currentY) * 0.2;
                 
-                // Add walking bounce (bobbing up and down)
+                
                 const bobOffset = Math.abs(Math.sin(Date.now() * 0.01 + furry.bobSeed)) * 0.03;
                 furry.mesh.position.set(worldX, newY + bobOffset, worldZ);
                 
-                // Rotate to face direction
+                
                 const dx = p2.x - p1.x;
                 const dz = p2.z - p1.z;
                 if (dx !== 0 || dz !== 0) {
@@ -433,17 +433,101 @@ function animate() {
                     furry.mesh.rotation.y += diff * 0.2;
                 }
                 
-                // Sway tail and head slightly to simulate walking animation
-                if (furry.mesh && furry.mesh.children) {
-                    // Sway tail (index 6 is the tail mesh in createFurryMesh)
-                    const tail = furry.mesh.children[6];
-                    if (tail) {
-                        tail.rotation.z = Math.sin(Date.now() * 0.015 + furry.bobSeed) * 0.3;
-                    }
-                    // Sway head
-                    const head = furry.mesh.children[4];
+                
+                if (furry.mesh) {
+                    const cycle = Date.now() * 0.015 + furry.bobSeed;
+                    
+                    
+                    const head = furry.mesh.getObjectByName("head");
                     if (head) {
-                        head.rotation.z = Math.sin(Date.now() * 0.008 + furry.bobSeed) * 0.05;
+                        head.rotation.z = Math.sin(cycle * 0.5) * 0.04;
+                    }
+                    
+                    
+                    const tail = furry.mesh.getObjectByName("tail");
+                    if (tail) {
+                        const tailSeg1 = tail.getObjectByName("tailSeg1");
+                        if (tailSeg1) {
+                            
+                            tailSeg1.rotation.z = Math.sin(cycle * 0.8) * 0.25;
+                            const tailSeg2 = tailSeg1.getObjectByName("tailSeg2");
+                            if (tailSeg2) {
+                                tailSeg2.rotation.z = Math.sin(cycle * 0.8 - 0.4) * 0.2;
+                                const tailSeg3 = tailSeg2.getObjectByName("tailSeg3");
+                                if (tailSeg3) {
+                                    tailSeg3.rotation.z = Math.sin(cycle * 0.8 - 0.8) * 0.15;
+                                }
+                            }
+                        } else {
+                            
+                            tail.rotation.z = Math.sin(cycle * 0.8) * 0.25;
+                        }
+                    }
+                    
+                    
+                    const leftLeg = furry.mesh.getObjectByName("leftLeg");
+                    if (leftLeg) {
+                        
+                        leftLeg.rotation.x = Math.sin(cycle) * 0.45;
+                        
+                        
+                        const leftLowerLeg = leftLeg.getObjectByName("leftLowerLeg");
+                        if (leftLowerLeg) {
+                            leftLowerLeg.rotation.x = Math.max(0, -Math.sin(cycle)) * 0.5;
+                        }
+                        
+                        
+                        const leftFoot = leftLeg.getObjectByName("leftFoot");
+                        if (leftFoot) {
+                            leftFoot.rotation.x = Math.sin(cycle + 0.5) * 0.1;
+                        }
+                    }
+                    
+                    const rightLeg = furry.mesh.getObjectByName("rightLeg");
+                    if (rightLeg) {
+                        
+                        rightLeg.rotation.x = -Math.sin(cycle) * 0.45;
+                        
+                        
+                        const rightLowerLeg = rightLeg.getObjectByName("rightLowerLeg");
+                        if (rightLowerLeg) {
+                            rightLowerLeg.rotation.x = Math.max(0, Math.sin(cycle)) * 0.5;
+                        }
+                        
+                        
+                        const rightFoot = rightLeg.getObjectByName("rightFoot");
+                        if (rightFoot) {
+                            rightFoot.rotation.x = -Math.sin(cycle + 0.5) * 0.1;
+                        }
+                    }
+                    
+                    
+                    const leftArm = furry.mesh.getObjectByName("leftArm");
+                    if (leftArm) {
+                        
+                        leftArm.rotation.x = -Math.sin(cycle) * 0.3;
+                        
+                        leftArm.rotation.z = 0.12 + Math.abs(Math.sin(cycle)) * 0.05;
+                        
+                        
+                        const leftLowerArm = leftArm.getObjectByName("leftLowerArm");
+                        if (leftLowerArm) {
+                            leftLowerArm.rotation.x = -0.2 - Math.max(0, Math.sin(cycle)) * 0.2;
+                        }
+                    }
+                    
+                    const rightArm = furry.mesh.getObjectByName("rightArm");
+                    if (rightArm) {
+                        
+                        rightArm.rotation.x = Math.sin(cycle) * 0.3;
+                        
+                        rightArm.rotation.z = -0.12 - Math.abs(Math.sin(cycle)) * 0.05;
+                        
+                        
+                        const rightLowerArm = rightArm.getObjectByName("rightLowerArm");
+                        if (rightLowerArm) {
+                            rightLowerArm.rotation.x = -0.2 - Math.max(0, -Math.sin(cycle)) * 0.2;
+                        }
                     }
                 }
                 

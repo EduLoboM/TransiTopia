@@ -1,4 +1,4 @@
-// --- Game State & Resources ---
+
 export const state = {
     odometer: 0.0,
     resources: {
@@ -18,13 +18,13 @@ export const state = {
         tokens: 0.0,
         happiness: 0.0
     },
-    selectedTile: null, // { x, z }
-    currentTool: 'select', // 'select', 'road', 'sos', 'fauna', 'demolish'
+    selectedTile: null, 
+    currentTool: 'select', 
     isPainting: false,
     paintedThisDrag: new Set(),
 };
 
-// Costs and stats for building
+
 export const BUILD_CONFIGS = {
     road: {
         name: 'Rodovia Virtual',
@@ -91,7 +91,7 @@ export const BUILD_CONFIGS = {
     }
 };
 
-// --- Odometer Simulation Random Events ---
+
 export const EVENTS = [
     { text: "Trecho de rodovia recapeado com sucesso! (+3% Felicidade)", effect: () => { state.happiness = Math.min(100, state.happiness + 3); } },
     { text: "Acidente leve detectado! Socorro SOS acionado rapidamente.", effect: () => {} },
@@ -99,7 +99,7 @@ export const EVENTS = [
     { text: "Motorista elogiou o novo asfalto nas redes sociais! (+2% Felicidade)", effect: () => { state.happiness = Math.min(100, state.happiness + 2); } }
 ];
 
-// --- HUD Updates ---
+
 export function updateHUD() {
     document.getElementById('odometer-value').textContent = `${state.odometer.toFixed(1)} km`;
     
@@ -127,7 +127,7 @@ export function updateHUD() {
         tokenVal.textContent = state.tokens;
     }
 
-    // Helper to format rate HTML nicely
+    
     const getRateHTML = (rate, unitPerSecond = true) => {
         if (rate > 0) {
             return ` <span style="font-size: 0.75rem; color: #10b981; font-weight: 800;">(+${rate.toFixed(1)}${unitPerSecond ? '/s' : ''})</span>`;
@@ -146,13 +146,13 @@ export function updateHUD() {
     document.getElementById('energy-value').innerHTML = `${state.resources.energy.toFixed(1)} <small>MW</small>${getRateHTML(energyRate)}`;
     document.getElementById('water-value').innerHTML = `${state.resources.water.toFixed(1)} <small>m³</small>${getRateHTML(waterRate)}`;
 
-    // Update tokens inside resources sidebar
+    
     const tokensResVal = document.getElementById('tokens-resource-value');
     if (tokensResVal) {
         tokensResVal.innerHTML = `${state.tokens}${getRateHTML(tokensRate)}`;
     }
 
-    // Update happiness inside resources sidebar
+    
     const happinessResVal = document.getElementById('happiness-resource-value');
     if (happinessResVal) {
         let hapRateHTML = '';
@@ -166,7 +166,7 @@ export function updateHUD() {
         happinessResVal.innerHTML = `${Math.round(state.happiness)}%${hapRateHTML}`;
     }
 
-    // Dynamic happiness icon background (pastel gray 0% to pastel rainbow 100%)
+    
     const happinessItem = document.getElementById('resource-happiness');
     if (happinessItem) {
         const iconEl = happinessItem.querySelector('.res-icon');
@@ -190,10 +190,10 @@ export function updateHUD() {
             const factor = Math.max(0, Math.min(100, state.happiness)) / 100;
             const gray = "#cbd5e1"; // Pastel Gray at 0%
             const c1 = interpolateColor(gray, "#ffb7b2", factor); // Red/Pink
-            const c2 = interpolateColor(gray, "#ffe596", factor); // Yellow
-            const c3 = interpolateColor(gray, "#a3f3c8", factor); // Mint
-            const c4 = interpolateColor(gray, "#9ad5ff", factor); // Blue
-            const c5 = interpolateColor(gray, "#d8b4fe", factor); // Lilac
+            const c2 = interpolateColor(gray, "#ffe596", factor); 
+            const c3 = interpolateColor(gray, "#a3f3c8", factor); 
+            const c4 = interpolateColor(gray, "#9ad5ff", factor); 
+            const c5 = interpolateColor(gray, "#d8b4fe", factor); 
 
             iconEl.style.background = `linear-gradient(135deg, ${c1}, ${c2}, ${c3}, ${c4}, ${c5})`;
         }
@@ -211,7 +211,7 @@ export function updateHUD() {
     }
 }
 
-// --- Toasts ---
+
 let toastTimeout;
 export function showToast(message, type = "success") {
     const toast = document.getElementById('toast-notification');
@@ -233,7 +233,7 @@ export function showToast(message, type = "success") {
     }, 4500);
 }
 
-// --- GPS simulated odometer logic ---
+
 export function simulateGPSTravel() {
     state.odometer += 5.0;
 
@@ -257,7 +257,7 @@ export function simulateGPSTravel() {
 
     updateHUD();
     
-    // Request tile selection refresh dynamically if hook is available (avoid circular imports)
+    
     if (state.selectedTile && window.refreshSelectedTileInfo) {
         window.refreshSelectedTileInfo();
     }

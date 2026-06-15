@@ -1,6 +1,17 @@
 import { defineConfig } from 'vite';
+import fs from 'fs';
+import path from 'path';
 
-let serverState = null; // Stored in server process memory
+const SAVE_FILE_PATH = path.resolve(__dirname, 'savegame.json');
+
+let serverState = null; 
+try {
+  if (fs.existsSync(SAVE_FILE_PATH)) {
+    serverState = JSON.parse(fs.readFileSync(SAVE_FILE_PATH, 'utf-8'));
+  }
+} catch (e) {
+  console.error("Error reading savegame.json:", e);
+}
 
 export default defineConfig({
   server: {
@@ -14,6 +25,7 @@ export default defineConfig({
           req.on('end', () => {
             try {
               serverState = JSON.parse(body);
+              fs.writeFileSync(SAVE_FILE_PATH, JSON.stringify(serverState, null, 2), 'utf-8');
               res.writeHead(200, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ success: true }));
             } catch (e) {

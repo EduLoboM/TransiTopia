@@ -17,7 +17,7 @@ A grande força do **Transitopia** está na sua mecânica de geração de recurs
 
 ## 📊 O Desafio do Gerenciamento: Balanceando a Felicidade
 
-Não basta apenas construir estradas; o jogador assume o papel de um gestor/regulador e precisa manter os cidadãos virtuais satisfeitos. A **Felicidade dos Cidadãos** (animaizinhos furry dentro do jogo de varias especies bem curvy, sluty, lewd e revealing) é o indicador mais importante do jogo e é afetada diretamente pelas decisões de investimento e comunicação:
+Não basta apenas construir estradas; o jogador assume o papel de um gestor/regulador e precisa manter os cidadãos virtuais satisfeitos. A **Felicidade dos Cidadãos** é o indicador mais importante do jogo e é afetada diretamente pelas decisões de investimento e comunicação:
 
 * **Segurança e Logística:** Se o jogador economizar recursos e não investir em recapeamento ou em viaturas de guincho SOS, acidentes virtuais começam a travar o fluxo na tela, fazendo a felicidade e a confiança da população despencarem.
 

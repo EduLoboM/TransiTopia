@@ -5,7 +5,7 @@ import { scene, GRID_SIZE, TILE_SPACING } from './scene.js';
 export const tiles = [];
 export let flatTiles = [];
 
-// Simple 2D Value Noise for smooth coherent terrain generation
+
 function createNoise2D() {
     const size = 32;
     const grid = [];
@@ -40,7 +40,7 @@ function createNoise2D() {
     };
 }
 
-// Initialize grid structure
+
 export function createGrid() {
     const tileGeometry = new THREE.BoxGeometry(1.0, 0.2, 1.0);
     const centerOffset = (GRID_SIZE * TILE_SPACING) / 2;
@@ -143,7 +143,7 @@ export function createGrid() {
                     const bodyMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.3, metalness: 0.1 });
                     
                     const body = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.16, 4), bodyMat);
-                    body.rotation.x = Math.PI / 2; // Lie flat along Z
+                    body.rotation.x = Math.PI / 2; 
                     fishGroup.add(body);
                     
                     const fin = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.05, 0.05), bodyMat);
@@ -170,7 +170,7 @@ export function createGrid() {
         }
     }
 
-    // Grid base platform (slate gray)
+    
     const baseGeo = new THREE.BoxGeometry(GRID_SIZE * TILE_SPACING + 1.0, 0.4, GRID_SIZE * TILE_SPACING + 1.0);
     const baseMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.9, metalness: 0.1 });
     const baseMesh = new THREE.Mesh(baseGeo, baseMat);
@@ -178,11 +178,11 @@ export function createGrid() {
     baseMesh.receiveShadow = true;
     scene.add(baseMesh);
 
-    // Populate flatTiles for optimized lookup in raycasting
+    
     flatTiles.push(...tiles.flatMap(row => row));
 }
 
-// --- Direct Building Actions ---
+
 export function buildStructureDirectly(tile, structureType) {
     try {
         const isFirstAction = !state.isPainting || (state.paintedThisDrag && state.paintedThisDrag.size <= 1);
@@ -1285,24 +1285,24 @@ export function createCarMesh() {
     const windowMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.1, metalness: 0.8 });
     const wheelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 });
     
-    // Chassis Body
+    
     const body = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.22), bodyMat);
     body.position.set(0, 0.05, 0);
     body.castShadow = true;
     group.add(body);
     
-    // Cabin Top
+    
     const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.05, 0.11), bodyMat);
     cabin.position.set(0, 0.09, -0.02);
     cabin.castShadow = true;
     group.add(cabin);
     
-    // Glass Windows
+    
     const glass = new THREE.Mesh(new THREE.BoxGeometry(0.102, 0.035, 0.09), windowMat);
     glass.position.set(0, 0.09, -0.02);
     group.add(glass);
     
-    // Wheels
+    
     const wheelGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.02, 8);
     wheelGeo.rotateZ(Math.PI / 2);
     
@@ -1376,12 +1376,12 @@ export function getSmoothPathPoints(path) {
                 points.push(pt);
             }
         } else {
-            // Going straight: just add the offset point at T[k]
+            
             points.push(new THREE.Vector3().addVectors(T[k], r_prev));
         }
     }
     
-    // Add end point
+    
     points.push(new THREE.Vector3().addVectors(T[n-1], rights[n-2]));
     
     return points;
@@ -1395,7 +1395,7 @@ export function updateCarSpawning() {
             window.activeCars = [];
         }
         
-        if (window.activeCars.length >= 6) return; // Cap at 6 cars
+        if (window.activeCars.length >= 6) return; 
         
         const structs = getRoadConnectedStructures();
         if (structs.length < 2) return;
@@ -1444,86 +1444,1240 @@ export function updateCarSpawning() {
 export function createFurryMesh() {
     const group = new THREE.Group();
     
-    // Randomize species/fur color
-    const furColors = [0xf97316, 0xe2e8f0, 0xfbb6ce, 0xfcd34d, 0xa78bfa];
-    const furColor = furColors[Math.floor(Math.random() * furColors.length)];
-    const furMat = new THREE.MeshStandardMaterial({ color: furColor, roughness: 0.8 });
     
-    // Randomize outfit color (revealing/lewd style: hot pink, black, purple)
-    const outfitColors = [0xff4f7b, 0x1e1b4b, 0x9333ea, 0x06b6d4, 0x10b981];
-    const outfitColor = outfitColors[Math.floor(Math.random() * outfitColors.length)];
-    const outfitMat = new THREE.MeshStandardMaterial({ color: outfitColor, roughness: 0.5 });
+    const genders = ['female', 'male'];
+    const gender = genders[Math.floor(Math.random() * genders.length)];
     
-    // 1. Curvy Hips
-    const hipsGeo = new THREE.SphereGeometry(0.07, 8, 8);
+    
+    const speciesList = ['coelho', 'onca', 'macaca', 'jacare', 'arara', 'capivara'];
+    const species = speciesList[Math.floor(Math.random() * speciesList.length)];
+    
+    
+    let variant = 'default';
+    if (species === 'onca') {
+        const oncaVariants = ['onca_pintada', 'pantera_preta', 'pantera_rosa', 'tigre', 'leoa'];
+        variant = oncaVariants[Math.floor(Math.random() * oncaVariants.length)];
+    } else if (species === 'macaca') {
+        variant = 'macaco';
+    } else if (species === 'coelho') {
+        const coelhoColors = ['branco', 'cinza', 'marrom', 'malhado'];
+        variant = coelhoColors[Math.floor(Math.random() * coelhoColors.length)];
+    } else if (species === 'jacare') {
+        variant = Math.random() < 0.5 ? 'jacare_verde' : 'jacare_papo_amarelo';
+    }
+    
+    
+    let furColor = 0x78350f;
+    let bellyColor = 0xfef9c3;
+    let eyeColor = 0x111111; 
+    
+    if (species === 'coelho') {
+        if (variant === 'branco') {
+            furColor = 0xffffff;
+            bellyColor = 0xfff7ed;
+            eyeColor = 0xef4444; 
+        } else if (variant === 'cinza') {
+            furColor = 0x94a3b8;
+            bellyColor = 0xe2e8f0;
+            eyeColor = 0x1e293b;
+        } else if (variant === 'marrom') {
+            furColor = 0x854d0e;
+            bellyColor = 0xfef08a;
+            eyeColor = 0x27272a;
+        } else if (variant === 'malhado') {
+            furColor = 0xffffff;
+            bellyColor = 0xfff7ed;
+            eyeColor = 0x1e293b;
+        }
+    } else if (species === 'onca') {
+        if (variant === 'onca_pintada') {
+            furColor = 0xf59e0b; 
+            bellyColor = 0xfef08a;
+            eyeColor = 0xd97706; 
+        } else if (variant === 'pantera_preta') {
+            furColor = 0x0f172a; 
+            bellyColor = 0x1e293b;
+            eyeColor = 0xfacc15; 
+        } else if (variant === 'pantera_rosa') {
+            furColor = 0xfb7185; 
+            bellyColor = 0xffe4e6;
+            eyeColor = 0x06b6d4; 
+        } else if (variant === 'tigre') {
+            furColor = 0xea580c; 
+            bellyColor = 0xffffff;
+            eyeColor = 0xd97706; 
+        } else if (variant === 'leoa') {
+            furColor = 0xddc397; 
+            bellyColor = 0xfef3c7; 
+            eyeColor = 0x854d0e; 
+        }
+    } else if (species === 'macaca') {
+        furColor = 0x78350f; 
+        bellyColor = 0xfef9c3;
+        eyeColor = 0x111111;
+    } else if (species === 'jacare') {
+        if (variant === 'jacare_verde') {
+            furColor = 0x166534; 
+            bellyColor = 0xa3e635; 
+            eyeColor = 0x84cc16; 
+        } else {
+            furColor = 0x3f6212; 
+            bellyColor = 0xfacc15; 
+            eyeColor = 0xeab308; 
+        }
+    } else if (species === 'arara') {
+        const macawColors = [0x0284c7, 0xdc2626, 0x16a34a]; 
+        furColor = macawColors[Math.floor(Math.random() * macawColors.length)];
+        bellyColor = 0xfacc15; 
+        eyeColor = 0x111111;
+    } else if (species === 'capivara') {
+        furColor = 0x5c4033; 
+        bellyColor = 0xd97706; 
+        eyeColor = 0x1c1917;
+    }
+    
+    
+    const furMat = new THREE.MeshStandardMaterial({ color: furColor, roughness: 0.7, metalness: 0.05, flatShading: true });
+    const bellyMat = new THREE.MeshStandardMaterial({ color: bellyColor, roughness: 0.7, flatShading: true });
+    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6, flatShading: true });
+    const mouthMat = new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.8, flatShading: true }); 
+    const blackMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+    
+    
+    function addSpot(parent, x, y, z, rx = 0, ry = 0, rz = 0, size = 0.016, color = 0x111111) {
+        const spotMat = new THREE.MeshBasicMaterial({ color: color });
+        const spotGeo = new THREE.BoxGeometry(size, size, 0.002);
+        const spot = new THREE.Mesh(spotGeo, spotMat);
+        spot.position.set(x, y, z);
+        spot.rotation.set(rx, ry, rz);
+        parent.add(spot);
+    }
+    
+    function addStripe(parent, x, y, z, w, h, rx = 0, ry = 0, rz = 0, color = 0x111111) {
+        const stripeMat = new THREE.MeshBasicMaterial({ color: color });
+        const stripeGeo = new THREE.BoxGeometry(w, h, 0.002);
+        const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+        stripe.position.set(x, y, z);
+        stripe.rotation.set(rx, ry, rz);
+        parent.add(stripe);
+    }
+
+    
+    function addSphereSpot(parent, radius, theta, phi, size = 0.016, spotColor = 0x111111) {
+        const spotMat = new THREE.MeshBasicMaterial({ color: spotColor });
+        const spotGeo = new THREE.BoxGeometry(size, size, 0.0035); 
+        const spot = new THREE.Mesh(spotGeo, spotMat);
+        
+        const x = radius * Math.cos(phi) * Math.sin(theta);
+        const y = radius * Math.sin(phi);
+        const z = radius * Math.cos(phi) * Math.cos(theta);
+        spot.position.set(x, y, z);
+        spot.rotation.set(-phi, theta, 0);
+        parent.add(spot);
+    }
+
+    function addSphereRosette(parent, radius, theta, phi, size = 0.018, spotColor = 0x111111, centerColor = 0xd97706) {
+        const rosetteGroup = new THREE.Group();
+        
+        const x = radius * Math.cos(phi) * Math.sin(theta);
+        const y = radius * Math.sin(phi);
+        const z = radius * Math.cos(phi) * Math.cos(theta);
+        rosetteGroup.position.set(x, y, z);
+        rosetteGroup.rotation.set(-phi, theta, 0);
+        
+        const spotMat = new THREE.MeshBasicMaterial({ color: spotColor });
+        const spotGeo = new THREE.BoxGeometry(size, size, 0.0035);
+        const blackMesh = new THREE.Mesh(spotGeo, spotMat);
+        rosetteGroup.add(blackMesh);
+        
+        const amberMat = new THREE.MeshBasicMaterial({ color: centerColor });
+        const amberGeo = new THREE.BoxGeometry(size * 0.65, size * 0.65, 0.004);
+        const amberMesh = new THREE.Mesh(amberGeo, amberMat);
+        amberMesh.position.set(0, 0, 0.0008);
+        rosetteGroup.add(amberMesh);
+        
+        parent.add(rosetteGroup);
+    }
+
+    function addSphereStripe(parent, radius, theta, phi, w, h, color = 0x111111) {
+        const stripeMat = new THREE.MeshBasicMaterial({ color: color });
+        const stripeGeo = new THREE.BoxGeometry(w, h, 0.0035);
+        const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+        
+        const x = radius * Math.cos(phi) * Math.sin(theta);
+        const y = radius * Math.sin(phi);
+        const z = radius * Math.cos(phi) * Math.cos(theta);
+        stripe.position.set(x, y, z);
+        stripe.rotation.set(-phi, theta, 0);
+        parent.add(stripe);
+    }
+
+    function addCylinderStripe(parent, radius, y, theta, w, h, color = 0x111111) {
+        const stripeMat = new THREE.MeshBasicMaterial({ color: color });
+        const stripeGeo = new THREE.BoxGeometry(w, h, 0.0035);
+        const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+        
+        const x = radius * Math.sin(theta);
+        const z = radius * Math.cos(theta);
+        stripe.position.set(x, y, z);
+        stripe.rotation.set(0, theta, 0);
+        parent.add(stripe);
+    }
+
+    function addRidge(parent, x, y, z, rx = 0.3) {
+        const ridgeColor = (variant === 'jacare_verde') ? 0x064e3b : 0x14532d;
+        const ridgeMat = new THREE.MeshStandardMaterial({ color: ridgeColor, roughness: 0.8, flatShading: true });
+        const ridgeGeo = new THREE.ConeGeometry(0.015, 0.02, 4);
+        ridgeGeo.rotateX(Math.PI / 2); // point up/back
+        const ridge = new THREE.Mesh(ridgeGeo, ridgeMat);
+        ridge.position.set(x, y, z);
+        ridge.rotation.x = rx;
+        parent.add(ridge);
+    }
+    
+    
+    
+    
+    
+    
+    const thighHeight = 0.07;
+    const calfHeight = 0.07;
+    const jointGeo = new THREE.SphereGeometry(0.016, 5, 5);
+    
+    
+    const leftThighGeo = new THREE.CylinderGeometry(0.022, 0.018, thighHeight, 6);
+    leftThighGeo.translate(0, -thighHeight / 2, 0); // pivot at hip joint Y = 0
+    const leftLeg = new THREE.Mesh(leftThighGeo, furMat);
+    leftLeg.name = "leftLeg";
+    leftLeg.position.set(-0.03, 0.14, 0);
+    leftLeg.castShadow = true;
+    group.add(leftLeg);
+    
+    // Left Knee joint sphere
+    const leftKnee = new THREE.Mesh(jointGeo, furMat);
+    leftKnee.position.set(0, -thighHeight, 0);
+    leftLeg.add(leftKnee);
+    
+    // Left Lower Leg (Calf)
+    const leftCalfGeo = new THREE.CylinderGeometry(0.018, 0.014, calfHeight, 6);
+    leftCalfGeo.translate(0, -calfHeight / 2, 0); 
+    const leftLowerLeg = new THREE.Mesh(leftCalfGeo, furMat);
+    leftLowerLeg.name = "leftLowerLeg";
+    leftLowerLeg.position.set(0, -thighHeight, 0);
+    leftLowerLeg.castShadow = true;
+    leftLeg.add(leftLowerLeg);
+    
+    
+    const leftAnkle = new THREE.Mesh(jointGeo, furMat);
+    leftAnkle.position.set(0, -calfHeight, 0);
+    leftLowerLeg.add(leftAnkle);
+    
+    
+    const footGeo = new THREE.BoxGeometry(0.024, 0.012, 0.045);
+    footGeo.translate(0, -0.006, 0.012); 
+    const leftFoot = new THREE.Mesh(footGeo, furMat);
+    leftFoot.name = "leftFoot";
+    leftFoot.position.set(0, -calfHeight, 0);
+    leftFoot.castShadow = true;
+    leftLowerLeg.add(leftFoot);
+    
+    
+    const rightThighGeo = new THREE.CylinderGeometry(0.022, 0.018, thighHeight, 6);
+    rightThighGeo.translate(0, -thighHeight / 2, 0); // pivot at hip joint Y = 0
+    const rightLeg = new THREE.Mesh(rightThighGeo, furMat);
+    rightLeg.name = "rightLeg";
+    rightLeg.position.set(0.03, 0.14, 0);
+    rightLeg.castShadow = true;
+    group.add(rightLeg);
+    
+    // Right Knee joint sphere
+    const rightKnee = new THREE.Mesh(jointGeo, furMat);
+    rightKnee.position.set(0, -thighHeight, 0);
+    rightLeg.add(rightKnee);
+    
+    // Right Lower Leg (Calf)
+    const rightCalfGeo = new THREE.CylinderGeometry(0.018, 0.014, calfHeight, 6);
+    rightCalfGeo.translate(0, -calfHeight / 2, 0); 
+    const rightLowerLeg = new THREE.Mesh(rightCalfGeo, furMat);
+    rightLowerLeg.name = "rightLowerLeg";
+    rightLowerLeg.position.set(0, -thighHeight, 0);
+    rightLowerLeg.castShadow = true;
+    rightLeg.add(rightLowerLeg);
+    
+    
+    const rightAnkle = new THREE.Mesh(jointGeo, furMat);
+    rightAnkle.position.set(0, -calfHeight, 0);
+    rightLowerLeg.add(rightAnkle);
+    
+    
+    const rightFoot = new THREE.Mesh(footGeo, furMat);
+    rightFoot.name = "rightFoot";
+    rightFoot.position.set(0, -calfHeight, 0);
+    rightFoot.castShadow = true;
+    rightLowerLeg.add(rightFoot);
+    
+    
+    const hipsGeo = new THREE.SphereGeometry(0.065, 8, 8);
     const hips = new THREE.Mesh(hipsGeo, furMat);
-    hips.scale.set(1.25, 0.9, 1.25); // extra curvy/wide hips
-    hips.position.set(0, 0.08, 0);
     hips.castShadow = true;
+    hips.receiveShadow = true;
+    hips.position.set(0, 0.14, 0);
+    hips.scale.set(1.12, 0.9, 1.12); 
     group.add(hips);
     
-    // Revealing outfit bottom (belt/shorts)
-    const shortsGeo = new THREE.CylinderGeometry(0.075, 0.075, 0.03, 8);
-    const shorts = new THREE.Mesh(shortsGeo, outfitMat);
-    shorts.position.set(0, 0.09, 0);
-    shorts.scale.set(1.26, 1.0, 1.26);
-    group.add(shorts);
-
-    // 2. Slender Waist
-    const waistGeo = new THREE.CylinderGeometry(0.045, 0.055, 0.06, 8);
+    
+    const waistGeo = new THREE.CylinderGeometry(0.042, 0.048, 0.08, 8);
     const waist = new THREE.Mesh(waistGeo, furMat);
-    waist.position.set(0, 0.14, 0);
     waist.castShadow = true;
+    waist.receiveShadow = true;
+    waist.position.set(0, 0.18, 0);
     group.add(waist);
-
-    // Revealing top (crop top)
-    const topGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.035, 8);
-    const cropTop = new THREE.Mesh(topGeo, outfitMat);
-    cropTop.position.set(0, 0.18, 0);
-    group.add(cropTop);
-
-    // 3. Curvy Chest (Busty / Curvy representation)
+    
+    
     const chestGroup = new THREE.Group();
-    chestGroup.position.set(0, 0.19, 0.02);
-    const breastGeo = new THREE.SphereGeometry(0.032, 6, 6);
-    const leftBreast = new THREE.Mesh(breastGeo, furMat);
-    leftBreast.position.set(-0.03, 0, 0.02);
-    leftBreast.scale.set(1.0, 1.0, 1.3);
-    chestGroup.add(leftBreast);
-    const rightBreast = new THREE.Mesh(breastGeo, furMat);
-    rightBreast.position.set(0.03, 0, 0.02);
-    rightBreast.scale.set(1.0, 1.0, 1.3);
-    chestGroup.add(rightBreast);
+    chestGroup.position.set(0, 0.22, 0);
+    
+    const chestGeo = new THREE.SphereGeometry(0.06, 8, 8);
+    const chestMesh = new THREE.Mesh(chestGeo, furMat);
+    chestMesh.scale.set(1.0, 0.85, 0.95); 
+    chestGroup.add(chestMesh);
     group.add(chestGroup);
-
-    // 4. Head
-    const headGeo = new THREE.SphereGeometry(0.06, 8, 8);
+    
+    
+    if (bellyColor !== null) {
+        const bellyMatDynamic = new THREE.MeshStandardMaterial({ color: bellyColor, roughness: 0.7, flatShading: true });
+        const bellyGeo = new THREE.SphereGeometry(0.05, 8, 8);
+        const belly = new THREE.Mesh(bellyGeo, bellyMatDynamic);
+        belly.scale.set(1.0, 1.3, 0.35);
+        belly.position.set(0, -0.04, 0.048);
+        chestGroup.add(belly);
+    }
+    
+    
+    if (species === 'arara') {
+        
+        function createMacawWing(isLeft, mainColor) {
+            const wingGroup = new THREE.Group();
+            wingGroup.name = isLeft ? "leftArm" : "rightArm";
+            wingGroup.position.set(isLeft ? -0.06 : 0.06, 0.23, 0);
+            wingGroup.rotation.z = isLeft ? 0.2 : -0.2;
+            
+            
+            const wingGeo1 = new THREE.BoxGeometry(0.014, 0.12, 0.05);
+            wingGeo1.translate(0, -0.06, 0.015);
+            const w1 = new THREE.Mesh(wingGeo1, furMat);
+            w1.castShadow = true;
+            wingGroup.add(w1);
+            
+            
+            let featherColor2 = 0xfacc15; 
+            if (mainColor === 0x0284c7) featherColor2 = 0xfacc15; 
+            else if (mainColor === 0xdc2626) featherColor2 = 0x0284c7; 
+            else if (mainColor === 0x16a34a) featherColor2 = 0xdc2626; 
+            
+            const featherMat2 = new THREE.MeshStandardMaterial({ color: featherColor2, roughness: 0.7, flatShading: true });
+            const wingGeo2 = new THREE.BoxGeometry(0.012, 0.09, 0.04);
+            wingGeo2.translate(0, -0.045, 0.005);
+            const w2 = new THREE.Mesh(wingGeo2, featherMat2);
+            w2.position.set(isLeft ? -0.006 : 0.006, -0.025, 0.005);
+            w2.rotation.y = isLeft ? 0.15 : -0.15;
+            wingGroup.add(w2);
+            
+            
+            let featherColor3 = 0x16a34a; 
+            if (mainColor === 0x0284c7) featherColor3 = 0x16a34a;
+            else if (mainColor === 0xdc2626) featherColor3 = 0xfacc15;
+            else if (mainColor === 0x16a34a) featherColor3 = 0xfacc15;
+            
+            const featherMat3 = new THREE.MeshStandardMaterial({ color: featherColor3, roughness: 0.7, flatShading: true });
+            const wingGeo3 = new THREE.BoxGeometry(0.01, 0.06, 0.03);
+            wingGeo3.translate(0, -0.03, 0.002);
+            const w3 = new THREE.Mesh(wingGeo3, featherMat3);
+            w3.position.set(isLeft ? -0.01 : 0.01, -0.045, 0.002);
+            w3.rotation.y = isLeft ? 0.3 : -0.3;
+            wingGroup.add(w3);
+            
+            return wingGroup;
+        }
+        
+        const leftArm = createMacawWing(true, furColor);
+        group.add(leftArm);
+        const rightArm = createMacawWing(false, furColor);
+        group.add(rightArm);
+    } else {
+        
+        const armSegmentHeight = 0.06;
+        
+        
+        const leftArmUpperGeo = new THREE.CylinderGeometry(0.016, 0.013, armSegmentHeight, 6);
+        leftArmUpperGeo.translate(0, -armSegmentHeight / 2, 0); // pivot at shoulder Y = 0
+        const leftArm = new THREE.Mesh(leftArmUpperGeo, furMat);
+        leftArm.name = "leftArm";
+        leftArm.position.set(-0.055, 0.23, 0);
+        leftArm.rotation.z = 0.1;
+        leftArm.castShadow = true;
+        group.add(leftArm);
+        
+        // Left Elbow joint sphere
+        const leftElbow = new THREE.Mesh(jointGeo, furMat);
+        leftElbow.position.set(0, -armSegmentHeight, 0);
+        leftArm.add(leftElbow);
+        
+        // Left Forearm
+        const leftForearmGeo = new THREE.CylinderGeometry(0.013, 0.011, armSegmentHeight, 6);
+        leftForearmGeo.translate(0, -armSegmentHeight / 2, 0); 
+        const leftLowerArm = new THREE.Mesh(leftForearmGeo, furMat);
+        leftLowerArm.name = "leftLowerArm";
+        leftLowerArm.position.set(0, -armSegmentHeight, 0);
+        leftLowerArm.castShadow = true;
+        leftArm.add(leftLowerArm);
+        
+        
+        const pawGeo = new THREE.BoxGeometry(0.018, 0.012, 0.025);
+        pawGeo.translate(0, -0.006, 0.006);
+        const leftPaw = new THREE.Mesh(pawGeo, furMat);
+        leftPaw.name = "leftPaw";
+        leftPaw.position.set(0, -armSegmentHeight, 0);
+        leftLowerArm.add(leftPaw);
+        
+        
+        const rightArmUpperGeo = new THREE.CylinderGeometry(0.016, 0.013, armSegmentHeight, 6);
+        rightArmUpperGeo.translate(0, -armSegmentHeight / 2, 0); // pivot Y = 0
+        const rightArm = new THREE.Mesh(rightArmUpperGeo, furMat);
+        rightArm.name = "rightArm";
+        rightArm.position.set(0.055, 0.23, 0);
+        rightArm.rotation.z = -0.1;
+        rightArm.castShadow = true;
+        group.add(rightArm);
+        
+        // Right Elbow joint sphere
+        const rightElbow = new THREE.Mesh(jointGeo, furMat);
+        rightElbow.position.set(0, -armSegmentHeight, 0);
+        rightArm.add(rightElbow);
+        
+        // Right Forearm
+        const rightForearmGeo = new THREE.CylinderGeometry(0.013, 0.011, armSegmentHeight, 6);
+        rightForearmGeo.translate(0, -armSegmentHeight / 2, 0);
+        const rightLowerArm = new THREE.Mesh(rightForearmGeo, furMat);
+        rightLowerArm.name = "rightLowerArm";
+        rightLowerArm.position.set(0, -armSegmentHeight, 0);
+        rightLowerArm.castShadow = true;
+        rightArm.add(rightLowerArm);
+        
+        
+        const rightPaw = new THREE.Mesh(pawGeo, furMat);
+        rightPaw.name = "rightPaw";
+        rightPaw.position.set(0, -armSegmentHeight, 0);
+        rightLowerArm.add(rightPaw);
+    }
+    
+    
+    const neckGeo = new THREE.CylinderGeometry(0.022, 0.026, 0.03, 6);
+    const neck = new THREE.Mesh(neckGeo, furMat);
+    neck.position.set(0, 0.27, 0);
+    group.add(neck);
+    
+    const headGeo = new THREE.SphereGeometry(0.072, 8, 8);
     const head = new THREE.Mesh(headGeo, furMat);
-    head.position.set(0, 0.26, 0);
+    head.position.set(0, 0.31, 0);
+    head.name = "head";
     head.castShadow = true;
     group.add(head);
-
-    // Cute animal ears (Cones) - Fox or Bunny style
-    const earGeo = new THREE.ConeGeometry(0.018, 0.055, 4);
-    const leftEar = new THREE.Mesh(earGeo, furMat);
-    leftEar.position.set(-0.035, 0.32, -0.01);
-    leftEar.rotation.set(0.1, 0, 0.25);
-    leftEar.castShadow = true;
-    group.add(leftEar);
     
-    const rightEar = new THREE.Mesh(earGeo, furMat);
-    rightEar.position.set(0.035, 0.32, -0.01);
-    rightEar.rotation.set(0.1, 0, -0.25);
-    rightEar.castShadow = true;
-    group.add(rightEar);
+    
+    const eyeWhiteGeo = new THREE.SphereGeometry(0.016, 8, 8);
+    const eyeIrisGeo = new THREE.SphereGeometry(0.012, 6, 6);
+    const eyePupilGeo = new THREE.SphereGeometry(0.008, 6, 6);
+    const eyeHighlightGeo = new THREE.SphereGeometry(0.0035, 4, 4);
+    
+    const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: (species === 'jacare') ? 0xeab308 : 0xffffff, roughness: 0.2, flatShading: true });
+    const eyeIrisMat = new THREE.MeshStandardMaterial({ color: eyeColor, roughness: 0.4, flatShading: true });
+    
+    let pupilMatColor = 0x09090b; 
+    if (species === 'onca' && variant === 'pantera_preta') pupilMatColor = 0xfacc15; 
+    else if (species === 'onca' && variant === 'pantera_rosa') pupilMatColor = 0x06b6d4; 
+    else if (species === 'coelho' && variant === 'branco') pupilMatColor = 0xfc2525; 
+    const eyePupilMat = new THREE.MeshBasicMaterial({ color: pupilMatColor });
+    const eyeHighlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    
+    
+    const leftEyeWhite = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat);
+    leftEyeWhite.position.set(-0.024, 0.01, 0.052);
+    leftEyeWhite.scale.set(1.0, 1.0, 0.5);
+    head.add(leftEyeWhite);
+    
+    const leftEyeIris = new THREE.Mesh(eyeIrisGeo, eyeIrisMat);
+    leftEyeIris.position.set(-0.024, 0.01, 0.056);
+    leftEyeIris.scale.set(1.0, 1.0, 0.3);
+    head.add(leftEyeIris);
+    
+    const leftEyePupil = new THREE.Mesh(eyePupilGeo, eyePupilMat);
+    leftEyePupil.position.set(-0.024, 0.01, 0.059);
+    if (species === 'jacare') {
+        leftEyePupil.scale.set(0.3, 1.0, 0.35); 
+    } else {
+        leftEyePupil.scale.set(1.0, 1.0, 0.3);
+    }
+    head.add(leftEyePupil);
+    
+    const leftEyeHighlight = new THREE.Mesh(eyeHighlightGeo, eyeHighlightMat);
+    leftEyeHighlight.position.set(-0.020, 0.015, 0.061); 
+    head.add(leftEyeHighlight);
+    
+    
+    const rightEyeWhite = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat);
+    rightEyeWhite.position.set(0.024, 0.01, 0.052);
+    rightEyeWhite.scale.set(1.0, 1.0, 0.5);
+    head.add(rightEyeWhite);
+    
+    const rightEyeIris = new THREE.Mesh(eyeIrisGeo, eyeIrisMat);
+    rightEyeIris.position.set(0.024, 0.01, 0.056);
+    rightEyeIris.scale.set(1.0, 1.0, 0.3);
+    head.add(rightEyeIris);
+    
+    const rightEyePupil = new THREE.Mesh(eyePupilGeo, eyePupilMat);
+    rightEyePupil.position.set(0.024, 0.01, 0.059);
+    if (species === 'jacare') {
+        rightEyePupil.scale.set(0.3, 1.0, 0.35);
+    } else {
+        rightEyePupil.scale.set(1.0, 1.0, 0.3);
+    }
+    head.add(rightEyePupil);
+    
+    const rightEyeHighlight = new THREE.Mesh(eyeHighlightGeo, eyeHighlightMat);
+    rightEyeHighlight.position.set(0.028, 0.015, 0.061);
+    head.add(rightEyeHighlight);
 
-    // 5. Fluffy animal tail
-    const tailGeo = new THREE.ConeGeometry(0.03, 0.12, 6);
-    const tail = new THREE.Mesh(tailGeo, furMat);
-    tail.position.set(0, 0.09, -0.08);
-    tail.rotation.set(-Math.PI / 3, 0, 0);
-    tail.castShadow = true;
-    group.add(tail);
+    
+    const topHair = new THREE.Mesh(new THREE.ConeGeometry(0.015, 0.03, 4), furMat);
+    topHair.position.set(0, 0.075, 0.005);
+    topHair.rotation.x = -0.15;
+    head.add(topHair);
+    
+    const leftTuft = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.025, 4), furMat);
+    leftTuft.position.set(-0.072, -0.015, 0.01);
+    leftTuft.rotation.z = 0.55;
+    head.add(leftTuft);
+    
+    const rightTuft = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.025, 4), furMat);
+    rightTuft.position.set(0.072, -0.015, 0.01);
+    rightTuft.rotation.z = -0.55;
+    head.add(rightTuft);
+
+    
+    const chestTuft = new THREE.Mesh(new THREE.ConeGeometry(0.015, 0.025, 4), furMat);
+    chestTuft.position.set(0, 0.02, 0.062);
+    chestTuft.rotation.x = 0.7;
+    chestGroup.add(chestTuft);
+    
+    
+    if (species === 'coelho') {
+        
+        const earBaseGeo = new THREE.BoxGeometry(0.018, 0.05, 0.008);
+        earBaseGeo.translate(0, 0.025, 0); 
+        const leftEar = new THREE.Mesh(earBaseGeo, furMat);
+        leftEar.position.set(-0.025, 0.065, -0.01);
+        leftEar.rotation.set(0.1, 0, 0.12);
+        leftEar.castShadow = true;
+        head.add(leftEar);
+        
+        const rightEar = new THREE.Mesh(earBaseGeo, furMat);
+        rightEar.position.set(0.025, 0.065, -0.01);
+        rightEar.rotation.set(0.1, 0, -0.12);
+        rightEar.castShadow = true;
+        head.add(rightEar);
+        
+        
+        const earTipGeo = new THREE.BoxGeometry(0.016, 0.04, 0.008);
+        earTipGeo.translate(0, 0.02, 0);
+        const leftEarTip = new THREE.Mesh(earTipGeo, furMat);
+        leftEarTip.position.set(0, 0.048, 0);
+        leftEarTip.rotation.z = -0.25; 
+        leftEar.add(leftEarTip);
+        
+        const rightEarTip = new THREE.Mesh(earTipGeo, furMat);
+        rightEarTip.position.set(0, 0.048, 0);
+        rightEarTip.rotation.z = 0.25; 
+        rightEar.add(rightEarTip);
+        
+        
+        const innerEarMat = new THREE.MeshStandardMaterial({ color: 0xffb6c1, roughness: 0.8, flatShading: true });
+        const innerEarGeo1 = new THREE.BoxGeometry(0.008, 0.04, 0.002);
+        const leftInner = new THREE.Mesh(innerEarGeo1, innerEarMat);
+        leftInner.position.set(0, 0.022, 0.005);
+        leftEar.add(leftInner);
+        
+        const rightInner = new THREE.Mesh(innerEarGeo1, innerEarMat);
+        rightInner.position.set(0, 0.022, 0.005);
+        rightEar.add(rightInner);
+
+        const innerEarGeo2 = new THREE.BoxGeometry(0.007, 0.03, 0.002);
+        const leftInnerTip = new THREE.Mesh(innerEarGeo2, innerEarMat);
+        leftInnerTip.position.set(0, 0.018, 0.005);
+        leftEarTip.add(leftInnerTip);
+        
+        const rightInnerTip = new THREE.Mesh(innerEarGeo2, innerEarMat);
+        rightInnerTip.position.set(0, 0.018, 0.005);
+        rightEarTip.add(rightInnerTip);
+
+        
+        const upperSnout = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 6), bellyMat);
+        upperSnout.scale.set(1.2, 0.8, 1.0);
+        upperSnout.position.set(0, -0.012, 0.054);
+        head.add(upperSnout);
+
+        const lowerSnout = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.008, 0.024), bellyMat);
+        lowerSnout.position.set(0, -0.025, 0.048);
+        head.add(lowerSnout);
+
+        const mouthInterior = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.008, 0.02), mouthMat);
+        mouthInterior.position.set(0, -0.019, 0.05);
+        head.add(mouthInterior);
+
+        
+        const buckTeeth = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.002), whiteMat);
+        buckTeeth.position.set(0, -0.01, 0.012);
+        upperSnout.add(buckTeeth);
+
+        const nose = new THREE.Mesh(new THREE.SphereGeometry(0.006, 4, 4), new THREE.MeshBasicMaterial({ color: 0xfb7185 }));
+        nose.position.set(0, 0.008, 0.015);
+        upperSnout.add(nose);
+        
+        
+        const whiskerGeo = new THREE.BoxGeometry(0.05, 0.0015, 0.0015);
+        const whiskerMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        
+        const wL1 = new THREE.Mesh(whiskerGeo, whiskerMat);
+        wL1.position.set(-0.02, -0.015, 0.06);
+        wL1.rotation.set(0, 0.25, 0.05);
+        head.add(wL1);
+        const wL2 = new THREE.Mesh(whiskerGeo, whiskerMat);
+        wL2.position.set(-0.02, -0.020, 0.06);
+        wL2.rotation.set(0, 0.25, -0.05);
+        head.add(wL2);
+        
+        const wR1 = new THREE.Mesh(whiskerGeo, whiskerMat);
+        wR1.position.set(0.02, -0.015, 0.06);
+        wR1.rotation.set(0, -0.25, -0.05);
+        head.add(wR1);
+        const wR2 = new THREE.Mesh(whiskerGeo, whiskerMat);
+        wR2.position.set(0.02, -0.020, 0.06);
+        wR2.rotation.set(0, -0.25, 0.05);
+        head.add(wR2);
+
+        
+        const collarMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9, flatShading: true });
+        const collarGeo = new THREE.SphereGeometry(0.015, 5, 5);
+        for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
+            const cx = Math.cos(angle) * 0.038;
+            const cz = Math.sin(angle) * 0.038;
+            const fluff = new THREE.Mesh(collarGeo, collarMat);
+            fluff.position.set(cx, 0.26, cz);
+            fluff.scale.set(1.0, 0.6, 1.0);
+            group.add(fluff);
+        }
+        
+        if (variant === 'malhado') {
+            addSpot(chestGroup, -0.04, 0.01, 0.03, 0, 0, 0, 0.02, 0x1e293b);
+            addSpot(waist, 0.03, -0.01, 0.04, 0, 0, 0, 0.025, 0x1e293b);
+            addSpot(hips, -0.05, 0.01, -0.03, 0, 0, 0, 0.03, 0x1e293b);
+            addSpot(head, 0.03, 0.03, 0.03, 0, 0, 0, 0.02, 0x1e293b);
+        }
+
+    } else if (species === 'onca') {
+        // Beautifully sculpted feline ears group
+        const earGroupL = new THREE.Group();
+        earGroupL.position.set(-0.038, 0.055, -0.01);
+        earGroupL.rotation.set(0.1, 0.1, 0.22);
+        
+        const earOuterGeo = new THREE.BoxGeometry(0.018, 0.035, 0.015);
+        const earOuterL = new THREE.Mesh(earOuterGeo, furMat);
+        earOuterL.castShadow = true;
+        earGroupL.add(earOuterL);
+        
+        const earInnerMat = new THREE.MeshStandardMaterial({ color: 0xffb6c1, roughness: 0.8, flatShading: true });
+        const earInnerGeo = new THREE.BoxGeometry(0.012, 0.028, 0.006);
+        const earInnerL = new THREE.Mesh(earInnerGeo, earInnerMat);
+        earInnerL.position.set(0.002, 0.002, 0.006); // facing forward/outward
+        earGroupL.add(earInnerL);
+        
+        head.add(earGroupL);
+        
+        const earGroupR = new THREE.Group();
+        earGroupR.position.set(0.038, 0.055, -0.01);
+        earGroupR.rotation.set(0.1, -0.1, -0.22);
+        
+        const earOuterR = new THREE.Mesh(earOuterGeo, furMat);
+        earOuterR.castShadow = true;
+        earGroupR.add(earOuterR);
+        
+        const earInnerR = new THREE.Mesh(earInnerGeo, earInnerMat);
+        earInnerR.position.set(-0.002, 0.002, 0.006);
+        earGroupR.add(earInnerR);
+        
+        head.add(earGroupR);
+
+        
+        const bridgeGeo = new THREE.BoxGeometry(0.018, 0.024, 0.032);
+        const bridge = new THREE.Mesh(bridgeGeo, furMat);
+        bridge.position.set(0, -0.005, 0.048);
+        bridge.rotation.x = 0.15;
+        head.add(bridge);
+
+        
+        const muzzleL = new THREE.Mesh(new THREE.SphereGeometry(0.016, 5, 5), bellyMat);
+        muzzleL.position.set(-0.012, -0.015, 0.058);
+        head.add(muzzleL);
+
+        const muzzleR = new THREE.Mesh(new THREE.SphereGeometry(0.016, 5, 5), bellyMat);
+        muzzleR.position.set(0.012, -0.015, 0.058);
+        head.add(muzzleR);
+
+        const lowerSnout = new THREE.Mesh(new THREE.BoxGeometry(0.024, 0.008, 0.025), bellyMat);
+        lowerSnout.position.set(0, -0.028, 0.054);
+        head.add(lowerSnout);
+
+        const mouthInterior = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.008, 0.02), mouthMat);
+        mouthInterior.position.set(0, -0.021, 0.056);
+        head.add(mouthInterior);
+
+        const nose = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.008, 0.01), blackMat);
+        nose.position.set(0, -0.008, 0.068);
+        head.add(nose);
+        
+        
+        const whiskerGeo = new THREE.BoxGeometry(0.07, 0.002, 0.002);
+        const whiskerMat = new THREE.MeshBasicMaterial({ color: 0xd1d5db });
+        
+        const wL1 = new THREE.Mesh(whiskerGeo, whiskerMat);
+        wL1.position.set(-0.035, -0.012, 0.058);
+        wL1.rotation.set(0, 0.2, 0.05);
+        head.add(wL1);
+        
+        const wL2 = new THREE.Mesh(whiskerGeo, whiskerMat);
+        wL2.position.set(-0.035, -0.018, 0.058);
+        wL2.rotation.set(0, 0.2, -0.05);
+        head.add(wL2);
+
+        const wR1 = new THREE.Mesh(whiskerGeo, whiskerMat);
+        wR1.position.set(0.035, -0.012, 0.058);
+        wR1.rotation.set(0, -0.2, -0.05);
+        head.add(wR1);
+        
+        const wR2 = new THREE.Mesh(whiskerGeo, whiskerMat);
+        wR2.position.set(0.035, -0.018, 0.058);
+        wR2.rotation.set(0, -0.2, 0.05);
+        head.add(wR2);
+
+        
+        if (variant === 'onca_pintada') {
+            const spotColor = 0x111111;
+            const centerColor = 0xd97706;
+            
+            
+            addSphereRosette(head, 0.072, 0.4, 0.5, 0.015, spotColor, centerColor); 
+            addSphereRosette(head, 0.072, -0.4, 0.5, 0.015, spotColor, centerColor); 
+            addSphereRosette(head, 0.072, 1.2, -0.2, 0.014, spotColor, centerColor); 
+            addSphereRosette(head, 0.072, -1.2, -0.2, 0.014, spotColor, centerColor); 
+            addSphereRosette(head, 0.072, 2.2, 0.3, 0.014, spotColor, centerColor); 
+            addSphereRosette(head, 0.072, -2.2, 0.3, 0.014, spotColor, centerColor); 
+            
+            
+            addSphereRosette(chestGroup, 0.06, 0.6, 0.2, 0.016, spotColor, centerColor);
+            addSphereRosette(chestGroup, 0.06, -0.6, 0.2, 0.016, spotColor, centerColor);
+            addSphereRosette(chestGroup, 0.06, 2.5, 0.1, 0.016, spotColor, centerColor);
+            addSphereRosette(chestGroup, 0.06, -2.5, 0.1, 0.016, spotColor, centerColor);
+            
+            
+            addCylinderStripe(waist, 0.046, 0.015, Math.PI / 2.3, 0.016, 0.016, centerColor); // spot
+            addCylinderStripe(waist, 0.046, 0.015, -Math.PI / 2.3, 0.016, 0.016, centerColor);
+            addCylinderStripe(waist, 0.046, -0.015, Math.PI, 0.016, 0.016, centerColor);
+            
+            
+            addSphereRosette(hips, 0.065, Math.PI / 2, 0.1, 0.02, spotColor, centerColor);
+            addSphereRosette(hips, 0.065, -Math.PI / 2, 0.1, 0.02, spotColor, centerColor);
+            addSphereRosette(hips, 0.065, 2.4, -0.2, 0.018, spotColor, centerColor);
+            addSphereRosette(hips, 0.065, -2.4, -0.2, 0.018, spotColor, centerColor);
+            
+            
+            addCylinderStripe(leftLeg, 0.022, -0.03, 0, 0.014, 0.014, centerColor);
+            addCylinderStripe(leftLeg, 0.022, -0.05, -Math.PI / 2, 0.014, 0.014, centerColor);
+            addCylinderStripe(rightLeg, 0.022, -0.03, 0, 0.014, 0.014, centerColor);
+            addCylinderStripe(rightLeg, 0.022, -0.05, Math.PI / 2, 0.014, 0.014, centerColor);
+        } else if (variant === 'tigre') {
+            
+            
+            addSphereStripe(head, 0.072, 0.4, 0.5, 0.025, 0.005);
+            addSphereStripe(head, 0.072, -0.4, 0.5, 0.025, 0.005);
+            addSphereStripe(head, 0.072, 1.2, -0.1, 0.025, 0.005);
+            addSphereStripe(head, 0.072, -1.2, -0.1, 0.025, 0.005);
+            
+            
+            addSphereStripe(chestGroup, 0.06, 0.6, 0.2, 0.035, 0.006);
+            addSphereStripe(chestGroup, 0.06, -0.6, 0.2, 0.035, 0.006);
+            
+            
+            addCylinderStripe(waist, 0.046, 0.01, Math.PI / 2, 0.035, 0.006);
+            addCylinderStripe(waist, 0.046, 0.01, -Math.PI / 2, 0.035, 0.006);
+            
+            
+            addSphereStripe(hips, 0.065, Math.PI / 2, 0.1, 0.04, 0.008);
+            addSphereStripe(hips, 0.065, -Math.PI / 2, 0.1, 0.04, 0.008);
+            
+            
+            addCylinderStripe(leftLeg, 0.022, -0.03, 0, 0.025, 0.005);
+            addCylinderStripe(leftLeg, 0.022, -0.06, -Math.PI / 2, 0.025, 0.005);
+            addCylinderStripe(rightLeg, 0.022, -0.03, 0, 0.025, 0.005);
+            addCylinderStripe(rightLeg, 0.022, -0.06, Math.PI / 2, 0.025, 0.005);
+
+            
+            addCylinderStripe(leftArm, 0.018, -0.03, -Math.PI / 2, 0.02, 0.005);
+            addCylinderStripe(rightArm, 0.018, -0.03, Math.PI / 2, 0.02, 0.005);
+        }
+
+    } else if (species === 'macaca') {
+        
+        const faceplateMat = new THREE.MeshStandardMaterial({ color: bellyColor, roughness: 0.8, flatShading: true });
+        const faceplate = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), faceplateMat);
+        faceplate.position.set(0, -0.01, 0.052);
+        faceplate.scale.set(1.1, 0.8, 0.5);
+        head.add(faceplate);
+
+        const upperSnout = new THREE.Mesh(new THREE.SphereGeometry(0.022, 5, 5), faceplateMat);
+        upperSnout.position.set(0, -0.015, 0.072);
+        upperSnout.scale.set(1.2, 0.7, 1.0);
+        head.add(upperSnout);
+
+        const lowerSnout = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.008, 0.02), faceplateMat);
+        lowerSnout.position.set(0, -0.028, 0.068);
+        head.add(lowerSnout);
+
+        const mouthInterior = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.006, 0.015), mouthMat);
+        mouthInterior.position.set(0, -0.021, 0.07);
+        head.add(mouthInterior);
+
+        
+        const nose = new THREE.Mesh(new THREE.SphereGeometry(0.005, 4, 4), blackMat);
+        nose.position.set(0, 0.004, 0.018); 
+        upperSnout.add(nose);
+
+        
+        const earGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.012, 6);
+        earGeo.rotateZ(Math.PI / 2);
+        const leftEar = new THREE.Mesh(earGeo, furMat);
+        leftEar.position.set(-0.068, -0.01, 0);
+        head.add(leftEar);
+        
+        const rightEar = new THREE.Mesh(earGeo, furMat);
+        rightEar.position.set(0.068, -0.01, 0);
+        head.add(rightEar);
+        
+        const innerEarMat = new THREE.MeshBasicMaterial({ color: bellyColor });
+        const innerEarGeo = new THREE.CylinderGeometry(0.014, 0.014, 0.004, 6);
+        innerEarGeo.rotateZ(Math.PI / 2);
+        
+        const leftInner = new THREE.Mesh(innerEarGeo, innerEarMat);
+        leftInner.position.set(-0.005, 0, 0);
+        leftEar.add(leftInner);
+        
+        const rightInner = new THREE.Mesh(innerEarGeo, innerEarMat);
+        rightInner.position.set(0.005, 0, 0);
+        rightEar.add(rightInner);
+
+        
+        const hairMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.8, flatShading: true }); 
+        const mohawkGroup = new THREE.Group();
+        mohawkGroup.position.set(0, 0.075, -0.015);
+        for (let j = 0; j < 3; j++) {
+            const spike = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.035 - j * 0.005, 4), hairMat);
+            spike.position.set(0, 0, -j * 0.02);
+            spike.rotation.x = -0.3 + j * 0.15;
+            mohawkGroup.add(spike);
+        }
+        head.add(mohawkGroup);
+
+    } else if (species === 'jacare') {
+        
+        const snoutGeo = new THREE.BoxGeometry(0.05, 0.02, 0.11);
+        snoutGeo.translate(0, 0, 0.05); 
+        const snout = new THREE.Mesh(snoutGeo, furMat);
+        snout.position.set(0, -0.01, 0.02);
+        head.add(snout);
+        
+        const lowerSnout = new THREE.Mesh(new THREE.BoxGeometry(0.046, 0.012, 0.10), furMat);
+        lowerSnout.position.set(0, -0.03, 0.06);
+        head.add(lowerSnout);
+
+        const tongue = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.005, 0.08), mouthMat);
+        tongue.position.set(0, -0.02, 0.06);
+        head.add(tongue);
+        
+        
+        const toothMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const toothGeoDown = new THREE.ConeGeometry(0.004, 0.012, 4);
+        toothGeoDown.rotateX(Math.PI); 
+        
+        const toothGeoUp = new THREE.ConeGeometry(0.004, 0.012, 4); 
+        
+        
+        const teethOffsets = [0.02, 0.035, 0.05, 0.065, 0.08, 0.095];
+        teethOffsets.forEach(zVal => {
+            
+            const tUL = new THREE.Mesh(toothGeoDown, toothMat);
+            tUL.position.set(-0.023, -0.012, zVal);
+            snout.add(tUL);
+            const tUR = new THREE.Mesh(toothGeoDown, toothMat);
+            tUR.position.set(0.023, -0.012, zVal);
+            snout.add(tUR);
+            
+            
+            const tLL = new THREE.Mesh(toothGeoUp, toothMat);
+            tLL.position.set(-0.021, 0.007, zVal - 0.01);
+            lowerSnout.add(tLL);
+            const tLR = new THREE.Mesh(toothGeoUp, toothMat);
+            tLR.position.set(0.021, 0.007, zVal - 0.01);
+            lowerSnout.add(tLR);
+        });
+
+        
+        addRidge(head, -0.015, 0.05, -0.03, 0.3);
+        addRidge(head, 0.015, 0.05, -0.03, 0.3);
+        
+        addRidge(chestGroup, -0.015, 0.05, -0.05, 0.3);
+        addRidge(chestGroup, 0.015, 0.05, -0.05, 0.3);
+        
+        addRidge(waist, -0.015, 0.05, -0.05, 0.3);
+        addRidge(waist, 0.015, 0.05, -0.05, 0.3);
+        
+        addRidge(hips, -0.015, 0.05, -0.06, 0.3);
+        addRidge(hips, 0.015, 0.05, -0.06, 0.3);
+
+        
+        const bellyPlateMat = new THREE.MeshStandardMaterial({ color: bellyColor, roughness: 0.7, flatShading: true });
+        for (let bp = 0; bp < 3; bp++) {
+            const plate = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.008, 0.005), bellyPlateMat);
+            plate.position.set(0, -0.03 + bp * 0.025, 0.078);
+            chestGroup.add(plate);
+        }
+
+    } else if (species === 'arara') {
+        
+        const beakMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5, flatShading: true });
+        const beakGeo = new THREE.ConeGeometry(0.02, 0.05, 5);
+        const beak = new THREE.Mesh(beakGeo, beakMat);
+        beak.position.set(0, -0.015, 0.075);
+        beak.rotation.set(Math.PI / 2.2, 0, 0); // Rotate 81 degrees so it curves out
+        head.add(beak);
+        
+        const beakLowerGeo = new THREE.ConeGeometry(0.015, 0.028, 5);
+        const beakLower = new THREE.Mesh(beakLowerGeo, beakMat);
+        beakLower.position.set(0, -0.03, 0.070);
+        beakLower.rotation.set(Math.PI / 2.6, 0, 0);
+        head.add(beakLower);
+        
+        
+        const crestMat = new THREE.MeshStandardMaterial({ color: furColor, roughness: 0.8, flatShading: true });
+        const crestGeo = new THREE.ConeGeometry(0.01, 0.035, 4);
+        for (let i = 0; i < 3; i++) {
+            const crestFeather = new THREE.Mesh(crestGeo, crestMat);
+            crestFeather.position.set(0, 0.078, -0.015 - i * 0.015);
+            crestFeather.rotation.x = -0.5 - i * 0.2;
+            head.add(crestFeather);
+        }
+        
+        
+        const patchMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const patchGeo = new THREE.SphereGeometry(0.016, 6, 6);
+        
+        const leftPatch = new THREE.Mesh(patchGeo, patchMat);
+        leftPatch.position.set(-0.024, 0.01, 0.04);
+        leftPatch.scale.set(1.0, 1.3, 0.3);
+        head.add(leftPatch);
+        
+        const rightPatch = new THREE.Mesh(patchGeo, patchMat);
+        rightPatch.position.set(0.024, 0.01, 0.04);
+        rightPatch.scale.set(1.0, 1.3, 0.3);
+        head.add(rightPatch);
+
+        
+        addSpot(leftPatch, -0.005, 0.008, 0.012, 0, 0, 0.1, 0.004, 0x111111);
+        addSpot(leftPatch, -0.005, -0.008, 0.012, 0, 0, -0.1, 0.004, 0x111111);
+        addSpot(rightPatch, 0.005, 0.008, 0.012, 0, 0, -0.1, 0.004, 0x111111);
+        addSpot(rightPatch, 0.005, -0.008, 0.012, 0, 0, 0.1, 0.004, 0x111111);
+
+    } else if (species === 'capivara') {
+        
+        const snoutGeo = new THREE.BoxGeometry(0.06, 0.042, 0.065);
+        const snout = new THREE.Mesh(snoutGeo, furMat);
+        snout.position.set(0, -0.01, 0.058);
+        head.add(snout);
+        
+        const lowerSnout = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.018, 0.055), furMat);
+        lowerSnout.position.set(0, -0.032, 0.052);
+        head.add(lowerSnout);
+
+        const mouthInterior = new THREE.Mesh(new THREE.BoxGeometry(0.048, 0.01, 0.04), mouthMat);
+        mouthInterior.position.set(0, -0.022, 0.054);
+        head.add(mouthInterior);
+
+        const nose = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.015, 0.01), new THREE.MeshBasicMaterial({ color: 0x1c1917 }));
+        nose.position.set(0, 0.015, 0.033);
+        snout.add(nose);
+        
+        
+        const stemMat = new THREE.MeshBasicMaterial({ color: 0x22c55e }); 
+        const stemGeo = new THREE.BoxGeometry(0.04, 0.003, 0.003);
+        const stem = new THREE.Mesh(stemGeo, stemMat);
+        stem.position.set(0.02, -0.02, 0.082); 
+        stem.rotation.set(0.1, 0.4, 0.2); 
+        head.add(stem);
+        
+        const flowerGroup = new THREE.Group();
+        flowerGroup.position.set(0.02, 0, 0); 
+        
+        
+        const centerGeo = new THREE.BoxGeometry(0.005, 0.005, 0.002);
+        const centerMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 }); 
+        const fCenter = new THREE.Mesh(centerGeo, centerMat);
+        flowerGroup.add(fCenter);
+        
+        
+        const petalMat = new THREE.MeshBasicMaterial({ color: 0xffffff }); 
+        const petalGeo = new THREE.BoxGeometry(0.004, 0.004, 0.001);
+        for (let p = 0; p < 4; p++) {
+            const petal = new THREE.Mesh(petalGeo, petalMat);
+            const pAngle = (p * Math.PI) / 2;
+            petal.position.set(Math.cos(pAngle) * 0.004, Math.sin(pAngle) * 0.004, 0);
+            flowerGroup.add(petal);
+        }
+        stem.add(flowerGroup);
+        
+        // Small capybara ears (attached to head)
+        const earGeo = new THREE.SphereGeometry(0.018, 5, 5);
+        const leftEar = new THREE.Mesh(earGeo, furMat);
+        leftEar.position.set(-0.045, 0.04, -0.01);
+        leftEar.scale.set(0.8, 1.0, 1.0);
+        head.add(leftEar);
+        
+        const rightEar = new THREE.Mesh(earGeo, furMat);
+        rightEar.position.set(0.045, 0.04, -0.01);
+        rightEar.scale.set(0.8, 1.0, 1.0);
+        head.add(rightEar);
+
+        // Sleepy Eyelids
+        const lidGeo = new THREE.BoxGeometry(0.022, 0.006, 0.01);
+        const leftLid = new THREE.Mesh(lidGeo, furMat);
+        leftLid.position.set(-0.024, 0.023, 0.052);
+        leftLid.rotation.z = -0.05;
+        head.add(leftLid);
+        
+        const rightLid = new THREE.Mesh(lidGeo, furMat);
+        rightLid.position.set(0.024, 0.023, 0.052);
+        rightLid.rotation.z = 0.05;
+        head.add(rightLid);
+    }
+    
+    // 9. Species-Specific Tails (attached to hips)
+    if (species !== 'capivara') {
+        let tailMesh;
+        
+        if (species === 'macaca') {
+            // Curly 4-segment monkey tail
+            const tailGroup = new THREE.Group();
+            tailGroup.name = "tail";
+            tailGroup.position.set(0, -0.02, -0.07);
+            
+            // Segment 1 (Base)
+            const tailGeo1 = new THREE.CylinderGeometry(0.01, 0.008, 0.05, 5);
+            tailGeo1.translate(0, -0.025, 0);
+            const tailSeg1 = new THREE.Mesh(tailGeo1, furMat);
+            tailSeg1.name = "tailSeg1";
+            tailSeg1.rotation.set(Math.PI / 3, 0, 0);
+            tailGroup.add(tailSeg1);
+            
+            
+            const tailGeo2 = new THREE.CylinderGeometry(0.008, 0.007, 0.05, 5);
+            tailGeo2.translate(0, -0.025, 0);
+            const tailSeg2 = new THREE.Mesh(tailGeo2, furMat);
+            tailSeg2.name = "tailSeg2";
+            tailSeg2.position.set(0, -0.05, 0);
+            tailSeg2.rotation.set(0.25, 0, 0);
+            tailSeg1.add(tailSeg2);
+            
+            
+            const tailGeo3 = new THREE.CylinderGeometry(0.007, 0.006, 0.05, 5);
+            tailGeo3.translate(0, -0.025, 0);
+            const tailSeg3 = new THREE.Mesh(tailGeo3, furMat);
+            tailSeg3.name = "tailSeg3";
+            tailSeg3.position.set(0, -0.05, 0);
+            tailSeg3.rotation.set(0.35, 0, 0);
+            tailSeg2.add(tailSeg3);
+            
+            
+            const tailGeo4 = new THREE.CylinderGeometry(0.006, 0.004, 0.05, 5);
+            tailGeo4.translate(0, -0.025, 0);
+            const tailSeg4 = new THREE.Mesh(tailGeo4, furMat);
+            tailSeg4.name = "tailSeg4";
+            tailSeg4.position.set(0, -0.05, 0);
+            tailSeg4.rotation.set(0.45, 0, 0);
+            tailSeg3.add(tailSeg4);
+            
+            tailMesh = tailGroup;
+        } else if (species === 'onca') {
+            
+            const tailGroup = new THREE.Group();
+            tailGroup.name = "tail";
+            tailGroup.position.set(0, -0.02, -0.07);
+            
+            
+            const tailGeo1 = new THREE.CylinderGeometry(0.012, 0.01, 0.06, 5);
+            tailGeo1.translate(0, -0.03, 0); 
+            const tailSeg1 = new THREE.Mesh(tailGeo1, furMat);
+            tailSeg1.name = "tailSeg1";
+            tailSeg1.rotation.set(Math.PI / 2.8, 0, 0);
+            tailGroup.add(tailSeg1);
+            
+            // Segment 2
+            const tailGeo2 = new THREE.CylinderGeometry(0.01, 0.008, 0.06, 5);
+            tailGeo2.translate(0, -0.03, 0);
+            const tailSeg2 = new THREE.Mesh(tailGeo2, furMat);
+            tailSeg2.name = "tailSeg2";
+            tailSeg2.position.set(0, -0.06, 0);
+            tailSeg2.rotation.set(0.1, 0, 0);
+            tailSeg1.add(tailSeg2);
+            
+            // Segment 3 (Tip - styled black for leoa)
+            const tailGeo3 = new THREE.CylinderGeometry(0.008, 0.005, 0.06, 5);
+            tailGeo3.translate(0, -0.03, 0);
+            
+            let tipMat = furMat;
+            if (variant === 'leoa') {
+                tipMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.7, flatShading: true }); // dark slate tip for lioness
+            }
+            const tailSeg3 = new THREE.Mesh(tailGeo3, tipMat);
+            tailSeg3.name = "tailSeg3";
+            tailSeg3.position.set(0, -0.06, 0);
+            tailSeg3.rotation.set(0.15, 0, 0);
+            tailSeg2.add(tailSeg3);
+            
+            if (variant === 'onca_pintada') {
+                const sColor = 0x111111;
+                // Tail rosettes/spots
+                addSpot(tailSeg1, 0, -0.03, 0.012, 0, 0, 0, 0.01, sColor);
+                addSpot(tailSeg2, 0, -0.03, 0.01, 0, 0, 0, 0.01, sColor);
+                addSpot(tailSeg3, 0, -0.03, 0.008, 0, 0, 0, 0.008, sColor);
+            } else if (variant === 'tigre') {
+                
+                addStripe(tailSeg1, 0, -0.03, 0.012, 0.016, 0.005, 0, 0, 0);
+                addStripe(tailSeg2, 0, -0.03, 0.01, 0.014, 0.005, 0, 0, 0);
+                addStripe(tailSeg3, 0, -0.03, 0.008, 0.012, 0.005, 0, 0, 0);
+            }
+            
+            tailMesh = tailGroup;
+        } else if (species === 'arara') {
+            
+            const tailGroup = new THREE.Group();
+            tailGroup.name = "tail";
+            tailGroup.position.set(0, -0.02, -0.065);
+            tailGroup.rotation.set(Math.PI / 3.5, 0, 0);
+            
+            const tailColors = furColor === 0x0284c7 ? 0xdc2626 : 0xfacc15;
+            const tailMat = new THREE.MeshStandardMaterial({ color: tailColors, roughness: 0.8, flatShading: true });
+            
+            // Center feather
+            const t1 = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.15, 0.01), tailMat);
+            t1.geometry.translate(0, -0.075, 0);
+            tailGroup.add(t1);
+            
+            // Left feather (shorter, offset)
+            const t2 = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.11, 0.008), tailMat);
+            t2.geometry.translate(0, -0.055, 0);
+            t2.position.set(-0.015, -0.02, 0.002);
+            t2.rotation.z = 0.15;
+            tailGroup.add(t2);
+            
+            // Right feather (shorter, offset)
+            const t3 = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.11, 0.008), tailMat);
+            t3.geometry.translate(0, -0.055, 0);
+            t3.position.set(0.015, -0.02, 0.002);
+            t3.rotation.z = -0.15;
+            tailGroup.add(t3);
+            
+            tailMesh = tailGroup;
+        } else if (species === 'coelho') {
+            // Bunny cloud-like cotton tail (4 clustered spheres)
+            const tailGroup = new THREE.Group();
+            tailGroup.name = "tail";
+            tailGroup.position.set(0, -0.02, -0.075);
+            
+            const cottonMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9, flatShading: true });
+            const sphereGeo = new THREE.SphereGeometry(0.018, 5, 5);
+            
+            const c1 = new THREE.Mesh(sphereGeo, cottonMat);
+            c1.position.set(0, 0, 0);
+            tailGroup.add(c1);
+            
+            const c2 = new THREE.Mesh(sphereGeo, cottonMat);
+            c2.position.set(-0.01, -0.008, 0.005);
+            tailGroup.add(c2);
+            
+            const c3 = new THREE.Mesh(sphereGeo, cottonMat);
+            c3.position.set(0.01, -0.008, 0.005);
+            tailGroup.add(c3);
+            
+            const c4 = new THREE.Mesh(sphereGeo, cottonMat);
+            c4.position.set(0, 0.01, 0.005);
+            tailGroup.add(c4);
+            
+            tailMesh = tailGroup;
+        } else if (species === 'jacare') {
+            // crocodile thick flat segmented tail
+            const tailGroup = new THREE.Group();
+            tailGroup.name = "tail";
+            tailGroup.position.set(0, -0.02, -0.07);
+            tailGroup.rotation.set(-Math.PI / 3.5, 0, 0);
+            
+            
+            const tailBaseGeo = new THREE.BoxGeometry(0.04, 0.024, 0.09);
+            tailBaseGeo.translate(0, 0, -0.045); 
+            const tailBase = new THREE.Mesh(tailBaseGeo, furMat);
+            tailBase.castShadow = true;
+            tailGroup.add(tailBase);
+            
+            
+            const tailSeg2 = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.018, 0.08), furMat);
+            tailSeg2.geometry.translate(0, 0, -0.04);
+            tailSeg2.position.set(0, -0.003, -0.08);
+            tailBase.add(tailSeg2);
+            
+            
+            const tailRidgeMat = new THREE.MeshStandardMaterial({ color: (variant === 'jacare_verde') ? 0x064e3b : 0x14532d, roughness: 0.8, flatShading: true });
+            const tailRidgeGeo = new THREE.ConeGeometry(0.01, 0.014, 4);
+            tailRidgeGeo.rotateX(Math.PI / 2);
+            
+            // ridges on segment 1
+            const r1 = new THREE.Mesh(tailRidgeGeo, tailRidgeMat);
+            r1.position.set(0, 0.014, -0.025);
+            tailBase.add(r1);
+            const r2 = new THREE.Mesh(tailRidgeGeo, tailRidgeMat);
+            r2.position.set(0, 0.014, -0.065);
+            tailBase.add(r2);
+            
+            // ridges on segment 2
+            const r3 = new THREE.Mesh(tailRidgeGeo, tailRidgeMat);
+            r3.position.set(0, 0.011, -0.035);
+            tailSeg2.add(r3);
+            
+            tailMesh = tailGroup;
+        }
+        
+        if (tailMesh) {
+            hips.add(tailMesh); // Attached to hips!
+        }
+    }
+
+    // Set model scale to make them very small and cute (50% of original size)
+    group.scale.set(0.5, 0.5, 0.5);
 
     return group;
 }
@@ -1583,12 +2737,12 @@ export function getSidewalkPathPoints(path, offsetLeft = false) {
                 points.push(pt);
             }
         } else {
-            // Going straight: just add the offset point at T[k]
+            
             points.push(new THREE.Vector3().addVectors(T[k], r_prev));
         }
     }
     
-    // Add end point
+    
     points.push(new THREE.Vector3().addVectors(T[n-1], rights[n-2]));
     
     return points;
@@ -1596,13 +2750,14 @@ export function getSidewalkPathPoints(path, offsetLeft = false) {
 
 export function updateFurrySpawning() {
     if (!scene) return;
+    if (Math.random() > 0.15) return;
     
     try {
         if (!window.activeFurries) {
             window.activeFurries = [];
         }
         
-        if (window.activeFurries.length >= 10) return; // Cap at 10 citizens
+        if (window.activeFurries.length >= 3) return; 
         
         const structs = getRoadConnectedStructures();
         if (structs.length < 2) return;
@@ -1639,7 +2794,7 @@ export function updateFurrySpawning() {
                     originalPath: path,
                     currentIndex: 0,
                     progress: 0.0,
-                    speed: 0.006 + Math.random() * 0.005, // Walking speed
+                    speed: 0.002 + Math.random() * 0.002, 
                     bobSeed: Math.random() * 100
                 });
             }

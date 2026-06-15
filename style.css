@@ -1,22 +1,22 @@
-/* --- Slime Rancher 2 / Flat 2.0 Cozy Light Mode Design System --- */
+
 :root {
-    --bg-dark: #f0f4f9; /* Warm Light Gray/Sky */
-    --bg-panel: rgba(255, 255, 255, 0.88); /* Translucent warm white */
-    --outline-color: #2c284a; /* Comic ink outline */
+    --bg-dark: #f0f4f9; 
+    --bg-panel: rgba(255, 255, 255, 0.88); 
+    --outline-color: #2c284a; 
     
-    --color-pink: #ffaec1; /* Sweet Cotton-Candy Pink */
+    --color-pink: #ffaec1; 
     --color-pink-hover: #ff9cb3;
-    --color-blue: #9ad5ff; /* Wholesome Sky Blue */
+    --color-blue: #9ad5ff; 
     --color-blue-hover: #83c6f9;
-    --color-mint: #a3f3c8; /* Cozy Pastel Mint */
+    --color-mint: #a3f3c8; 
     --color-mint-hover: #8beeb7;
-    --color-yellow: #ffe596; /* Pastel Honey Yellow */
-    --color-danger: #ff9e9e; /* Soft Pastel Red */
+    --color-yellow: #ffe596; 
+    --color-danger: #ff9e9e; 
     --color-danger-hover: #ff8585;
     
     --font-cozy: 'Quicksand', sans-serif;
-    --text-color: #2c284a; /* Dark ink text for light mode legibility */
-    --text-muted: #5e5a82; /* Muted ink text */
+    --text-color: #2c284a; 
+    --text-muted: #5e5a82; 
     
     --border-thick: 4px solid var(--outline-color);
     --border-medium: 3px solid var(--outline-color);
@@ -55,7 +55,7 @@ body {
     z-index: 1;
 }
 
-/* Tool-specific cursors for the canvas */
+
 #canvas-container.tool-road,
 #canvas-container.tool-sos,
 #canvas-container.tool-fauna {
@@ -74,7 +74,7 @@ body {
     cursor: grabbing;
 }
 
-/* --- HUD Overlay Layout & Wrappers --- */
+
 .hud-layer {
     position: absolute;
     top: 0;
@@ -85,7 +85,7 @@ body {
     pointer-events: none;
 }
 
-/* Enable pointer events on active wrappers and position absolutely */
+
 .hud-header-wrapper {
     position: absolute;
     top: 24px;
@@ -110,14 +110,14 @@ body {
 .hud-footer-wrapper {
     position: absolute;
     bottom: 24px;
-    left: 374px; /* Sidebar width (330px) + left (24px) + gap (20px) = 374px */
+    left: 374px; 
     right: 24px;
     z-index: 19;
     pointer-events: auto;
     transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.25);
 }
 
-/* --- Organic Wiggly / Blob-like Light Panels --- */
+
 .glass-panel {
     background: var(--bg-panel);
     backdrop-filter: blur(12px);
@@ -133,7 +133,7 @@ body {
     box-shadow: 0 8px 0 var(--outline-color);
 }
 
-/* --- Panel Collapse sliding mechanics --- */
+
 .hud-header-wrapper.collapsed {
     transform: translateY(calc(-100% - 40px));
 }
@@ -146,7 +146,7 @@ body {
     transform: translateY(calc(100% + 30px));
 }
 
-/* --- Bubble Minimizer Toggle Buttons --- */
+
 .panel-toggle-btn {
     position: absolute;
     width: 38px;
@@ -234,7 +234,7 @@ body {
     top: -38px;
 }
 
-/* --- Top Header HUD Styling --- */
+
 .hud-header {
     display: flex;
     justify-content: space-between;
@@ -313,7 +313,7 @@ body {
     min-width: 170px;
     position: relative;
     padding-bottom: 16px;
-    overflow: hidden; /* Clips the bar container to rounded border-radius path */
+    overflow: hidden; 
 }
 
 .happiness-bar-container {
@@ -333,10 +333,10 @@ body {
 }
 
 .stat-card.tokens .stat-value {
-    color: #e28a00; /* Dark yellow for contrast in light mode */
+    color: #e28a00; 
 }
 
-/* --- Left Panel Resource Layout --- */
+
 .left-panel {
     display: flex;
     flex-direction: column;
@@ -378,7 +378,7 @@ body {
     transform: translateX(4px);
 }
 
-/* Flat, round icons with thick outlines */
+
 .res-icon {
     font-size: 1.35rem;
     width: 40px;
@@ -393,22 +393,22 @@ body {
 }
 
 #resource-minerals .res-icon {
-    background: #ffaec1; /* Pastel Pink */
+    background: #ffaec1; 
 }
 #resource-steel .res-icon {
-    background: #9ad5ff; /* Pastel Sky Blue */
+    background: #9ad5ff; 
 }
 #resource-energy .res-icon {
-    background: #ffe596; /* Pastel Honey Yellow */
+    background: #ffe596; 
 }
 #resource-water .res-icon {
-    background: #a3f3c8; /* Pastel Mint Green */
+    background: #a3f3c8; 
 }
 #resource-tokens .res-icon {
-    background: #d8b4fe; /* Pastel Lavender Purple */
+    background: #d8b4fe; 
 }
 #resource-happiness .res-icon {
-    background: #fed7aa; /* Pastel Peach Orange */
+    background: #fed7aa; 
 }
 
 .status-connected {
@@ -448,7 +448,7 @@ body {
     color: var(--text-muted);
 }
 
-/* GPS Simulator box */
+
 .gps-simulator-box {
     margin-top: auto;
     padding: 14px;
@@ -489,7 +489,7 @@ body {
     color: var(--text-color);
 }
 
-/* --- Pill-Shaped Bubbly Buttons --- */
+
 .bubble-btn {
     border-radius: 9999px;
     border: var(--border-thick);
@@ -528,7 +528,7 @@ body {
     box-shadow: 0 0px 0 var(--outline-color);
 }
 
-/* --- Bottom Footer Layout --- */
+
 .hud-footer {
     display: flex;
     justify-content: space-between;
@@ -537,7 +537,7 @@ body {
     width: 100%;
 }
 
-/* --- Global Build Toolbar / Dock (SimCity Style) --- */
+
 .build-toolbar {
     display: flex;
     align-items: center;
@@ -545,13 +545,13 @@ body {
     padding: 10px 14px;
     background: var(--bg-panel);
     border: var(--border-thick);
-    border-radius: 9999px; /* Pill dock layout */
+    border-radius: 9999px; 
     box-shadow: var(--box-shadow-flat);
     pointer-events: auto;
     max-width: 90vw;
 }
 
-/* Scrollable container for building items */
+
 .build-scroll-wrapper {
     position: relative;
     overflow: hidden;
@@ -559,7 +559,7 @@ body {
     flex-shrink: 1;
 }
 
-/* Deactivated white fades overlaying build items */
+
 .build-scroll-wrapper::before,
 .build-scroll-wrapper::after {
     display: none;
@@ -572,7 +572,7 @@ body {
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     padding: 4px 8px;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none; 
 }
 .build-scroll-list::-webkit-scrollbar { display: none; }
 
@@ -581,14 +581,14 @@ body {
     flex-shrink: 0;
 }
 
-/* Toolbar Buttons */
+
 .tool-btn {
     display: flex;
     align-items: center;
     gap: 8px;
     height: 48px;
     padding: 0 20px;
-    border-radius: 9999px; /* Pill shaped buttons */
+    border-radius: 9999px; 
     border: var(--border-medium);
     background-color: #ffffff;
     cursor: pointer;
@@ -611,20 +611,20 @@ body {
     box-shadow: 0 0px 0 var(--outline-color);
 }
 
-/* Active tool styles */
+
 .tool-btn.active {
     background-color: var(--color-pink);
     transform: translateY(2px);
     box-shadow: 0 1px 0 var(--outline-color);
 }
 
-/* Tool-specific active colors */
+
 #tool-select.active {
     background-color: var(--color-blue);
 }
 
 #tool-road.active {
-    background-color: #94a3b8; /* Slate for road */
+    background-color: #94a3b8; 
     color: white;
 }
 
@@ -649,10 +649,10 @@ body {
     font-size: 1.25rem;
 }
 
-/* Floating Selected Tile Card (pops above toolbar when tile is selected) */
+
 .floating-selection-card {
     position: absolute;
-    bottom: 92px; /* Sits cleanly above the toolbar */
+    bottom: 92px; 
     left: 20px;
     display: flex;
     align-items: center;
@@ -689,7 +689,7 @@ body {
     font-weight: 700;
 }
 
-/* Build Options & Actions inside Selection Card */
+
 .build-actions-wrapper {
     display: flex;
     flex-direction: column;
@@ -718,7 +718,7 @@ body {
     box-shadow: 0 0px 0 var(--outline-color);
 }
 
-/* Controls Guide cozy panel */
+
 .controls-guide {
     display: flex;
     flex-direction: column;
@@ -761,7 +761,7 @@ kbd {
     color: #fff;
 }
 
-/* --- Toast Notifications --- */
+
 .toast {
     position: absolute;
     bottom: 24px;
@@ -789,7 +789,7 @@ kbd {
     pointer-events: none;
 }
 
-/* --- Animations --- */
+
 @keyframes bounce-slow {
     0%, 100% {
         transform: translateY(0) scale(1);
@@ -799,7 +799,7 @@ kbd {
     }
 }
 
-/* Mobile responsive layout */
+
 @media (max-width: 768px) {
     .hud-layer {
         grid-template-areas: 
@@ -819,7 +819,7 @@ kbd {
         height: auto;
     }
 
-    /* Collapsed wrappers inherit the desktop calc() values for consistency */
+    
 
     .hud-footer {
         flex-direction: column;
@@ -846,7 +846,7 @@ kbd {
     }
 }
 
-/* --- Shop Button & Modal Styles --- */
+
 .btn-shop {
     display: flex;
     align-items: center;
